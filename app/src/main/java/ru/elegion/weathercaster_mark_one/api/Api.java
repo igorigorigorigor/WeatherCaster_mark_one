@@ -1,27 +1,26 @@
 package ru.elegion.weathercaster_mark_one.api;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import ru.elegion.weathercaster_mark_one.models.City;
+import ru.elegion.weathercaster_mark_one.models.CityLab;
 
 /**
  * Created by Freeman on 07.07.2016.
  */
 public class Api {
+    private final Context mAppContext;
     private static Api sApi;
 
     private static final String sApiKey = "df7baaabd500e55d7c8048a30cd21ab1";
@@ -31,9 +30,13 @@ public class Api {
     private OkHttpClient client = new OkHttpClient();
     private String mResponse;
 
-    public void getCurrentTemp(String cityId) {
+    private Api(Context appContext){
+        mAppContext = appContext;
+    }
+
+    public void setCurrentTempforCity(final String cityId) {
         sUrl = String.format(sUrl, cityId, sApiKey);
-        Log.d("MyLog", sUrl);
+        String temp = "";
         Request request = new Request.Builder()
                 .url(sUrl)
                 .build();
@@ -51,16 +54,17 @@ public class Api {
 
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode root = mapper.readTree(response.body().string());
-                Log.d("MyLog", root.path("main").path("temp").asText());
+                String temp = root.path("main").path("temp").asText();
 
+                CityLab.build(mAppContext).get(cityId).setTemp(temp);
             }
         });
     }
 
 
-    public static Api build(){
+    public static Api build(Context c){
         if (sApi == null){
-            sApi = new Api();
+            sApi  = new Api(c.getApplicationContext());
         }
         return sApi;
     }

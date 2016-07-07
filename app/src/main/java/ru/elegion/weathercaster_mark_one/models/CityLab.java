@@ -23,19 +23,31 @@ public class CityLab {
     private CityLab(Context appContext){
         mAppContext = appContext;
         mCities = new ArrayList<City>();
-        for (int i = 0; i < 100; i++){
+
+        //for (int i = 0; i < 100; i++){
             City c = new City();
-            c.setName("Kazan #" + i);
+            //c.setName("Kazan #" + i);
+            c.setName("Kazan");
             c.setId("551487");
-            Api.build().getCurrentTemp(c.getId());
+
+            Api.build(mAppContext).setCurrentTempforCity("551487");
             mCities.add(c);
-        }
+        //}
     }
 
-    public static CityLab get (Context c){
+    public static CityLab build(Context c){
         if (sCityLab == null){
             sCityLab  = new CityLab(c.getApplicationContext());
         }
         return sCityLab;
+    }
+
+    public City get(String cityId) {
+        for (City city : mCities){
+            if (city.getId().equalsIgnoreCase(cityId)){
+                return city;
+            }
+        }
+        return null;
     }
 }

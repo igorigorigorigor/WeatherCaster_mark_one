@@ -6,7 +6,7 @@ package ru.elegion.weathercaster_mark_one.models;
 public class City {
     private String _name;
     private String _id;
-    private Main _main;
+    private String _temp;
 
     public String getName() {
         return _name;
@@ -24,20 +24,12 @@ public class City {
         _id = id;
     }
 
-    public Main getMain() {
-        return _main;
+    public String getTemp() {
+        return _temp;
     }
 
-
-    public static class Main {
-        private String _temp;
-
-        public void setTemp(String currentTemp) {
+    public void setTemp(String currentTemp) {
            _temp = currentTemp;
         }
 
-        public String getTemp() {
-            return _temp;
-        }
-    }
 }

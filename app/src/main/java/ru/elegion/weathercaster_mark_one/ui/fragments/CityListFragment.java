@@ -28,7 +28,7 @@ public class CityListFragment extends android.support.v4.app.ListFragment {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(R.string.cities_title);
 
-        mCities = CityLab.get(getActivity()).getCities();
+        mCities = CityLab.build(getActivity()).getCities();
 
         CityAdapter adapter = new CityAdapter(mCities);
         setListAdapter(adapter);
@@ -46,8 +46,11 @@ public class CityListFragment extends android.support.v4.app.ListFragment {
             }
             City c = getItem(position);
 
-            TextView titleTextView = (TextView) convertView.findViewById(R.id.city_list_item_nameTextView);
-            titleTextView.setText(c.getName());
+            TextView nameTextView = (TextView) convertView.findViewById(R.id.city_list_item_nameTextView);
+            nameTextView.setText(c.getName());
+
+            TextView tempTextView = (TextView) convertView.findViewById(R.id.city_list_item_tempTextView);
+            tempTextView.setText(c.getTemp());
 
             return convertView;
         }
