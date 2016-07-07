@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WeatherCaster_mark_one</string>
+    <string name="cities_title">Погода в России</string>
+</resources>
