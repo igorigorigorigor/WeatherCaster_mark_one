@@ -2,7 +2,8 @@
     <string name="app_name">WeatherCaster_mark_one</string>
     <string name="cities_title">Погода в России</string>
     <string name="API_BASE_URL">http://api.openweathermap.org/data/2.5/</string>
-    <string name="SELECTOR_TYPE">group?id=</string>
     <string name="API_KEY">df7baaabd500e55d7c8048a30cd21ab1</string>
-    <string name="downloading_data">Downloading weather info</string>
+    <string name="downloading_data">Initializing weather info</string>
+    <string name="network_error">Network error. \nPlease, check your network \nconnection and try again.</string>
+    <string name="btnRefresh">REFRESH</string>
 </resources>

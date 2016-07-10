@@ -2,6 +2,10 @@ package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,7 +41,7 @@ import ru.elegion.weathercaster_mark_one.R;
 
 public class CityListActivity extends ListActivity {
     private static String LOG_TAG = "CityListActivity";
-    private ArrayList<City> mCities;
+    private CityLab mCityLab;
     private CityAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListView mCityList;
@@ -48,6 +54,21 @@ public class CityListActivity extends ListActivity {
         setTitle(R.string.cities_title);
         setContentView(R.layout.activity_city_list);
 
+        if (getBooleanPreference("IS_FIRST_LAUNCH") && !isNetworkConnected()){
+            setContentView(R.layout.activity_network_error);
+            FrameLayout frmNetworkError = (FrameLayout) findViewById(R.id.flNetworkError);
+            frmNetworkError.setVisibility(View.VISIBLE);
+            TextView tvNetworkError = (TextView) findViewById(R.id.tvNetworkError);
+            Button btnRefresh = (Button) findViewById(R.id.btnRefresh);
+            btnRefresh .setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recreate();
+                }
+            });
+            return;
+        };
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -56,20 +77,42 @@ public class CityListActivity extends ListActivity {
             }
         });
 
-        mCities = CityLab.build(getApplicationContext()).getCities();
+
+        mCityLab = CityLab.build(getApplicationContext());
         UpdateCitiesTask initiateCitiesTask = new UpdateCitiesTask();
-        initiateCitiesTask.execute(mCities);
+        initiateCitiesTask.execute(mCityLab.getCities());
 
 
         mCityList = (ListView) findViewById(android.R.id.list);
-        mAdapter = new CityAdapter(mCities);
+        mAdapter = new CityAdapter(mCityLab.getCities());
         mCityList.setAdapter(mAdapter);
+
+        setBooleanPreference("IS_FIRST_LAUNCH", false);
+    }
+
+    private void setBooleanPreference(String setting, boolean value) {
+        final SharedPreferences preferences = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(setting, value);
+        editor.apply();
+    }
+
+    private boolean getBooleanPreference(String setting) {
+        final SharedPreferences preferences = getSharedPreferences("setting", Context.MODE_PRIVATE);
+        return preferences.getBoolean(setting, true);
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm =
+                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = (activeNetwork != null) && activeNetwork.isConnectedOrConnecting();
+        return isConnected;
     }
 
     private void refreshContent() {
-        mCities = CityLab.build(getApplicationContext()).getCities();
         final UpdateCitiesTask refreshCitiesTask = new UpdateCitiesTask();
-        refreshCitiesTask.execute(mCities);
+        refreshCitiesTask.execute(mCityLab.getCities());
         mAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
     }
@@ -84,13 +127,13 @@ public class CityListActivity extends ListActivity {
             if (convertView == null){
                 convertView = CityListActivity.this.getLayoutInflater().inflate(R.layout.list_item_city, null);
             }
-            City c = getItem(position);
+            City city = getItem(position);
 
             TextView nameTextView = (TextView) convertView.findViewById(R.id.city_list_item_nameTextView);
-            nameTextView.setText(c.getName());
+            nameTextView.setText(city.getName());
 
             TextView tempTextView = (TextView) convertView.findViewById(R.id.city_list_item_tempTextView);
-            tempTextView.setText(c.getTemp());
+            tempTextView.setText(city.getTemp());
 
             return convertView;
         }
@@ -106,7 +149,7 @@ public class CityListActivity extends ListActivity {
         }
     }
 
-    public class UpdateCitiesTask extends AsyncTask<ArrayList<City>, Void, Void> {
+    private class UpdateCitiesTask extends AsyncTask<ArrayList<City>, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -133,7 +176,7 @@ public class CityListActivity extends ListActivity {
                         while ((line = r.readLine()) != null) {
                             responseBody += line + "\n";
                         }
-                        mCities = parseResponseAndUpdateCities(cities, responseBody);
+                        mCityLab.updateCities(parseResponseAndUpdateCities(cities, responseBody));
                         close(r);
                         urlConnection.disconnect();
                         // Background work finished successfully
@@ -168,7 +211,8 @@ public class CityListActivity extends ListActivity {
                     {
                         JSONObject cityJsonObject = listJsonArray.getJSONObject(i);
                         cities.get(i).setName(cityJsonObject.getString("name"));
-                        cities.get(i).setTemp(cityJsonObject.getJSONObject("main").getString("temp"));
+                        String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
+                        cities.get(i).setTemp(temp + " \u2103");
                     }
                     return cities;
                 } else {
@@ -199,7 +243,7 @@ public class CityListActivity extends ListActivity {
 
         StringBuilder urlBuilder = new StringBuilder(getString(R.string.API_BASE_URL));
 
-        urlBuilder.append(getString(R.string.SELECTOR_TYPE));
+        urlBuilder.append("group?id=");
         if (cities.size() == 1) {
             urlBuilder.append(cities.get(0).getId());
         } else {
