@@ -1,9 +1,12 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+
 import ru.elegion.weathercaster_mark_one.models.City;
 import ru.elegion.weathercaster_mark_one.models.CityLab;
 import ru.elegion.weathercaster_mark_one.R;
@@ -33,20 +37,41 @@ public class CityListActivity extends ListActivity {
     private static String LOG_TAG = "CityListActivity";
     private ArrayList<City> mCities;
     private CityAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ListView mCityList;
+    private ProgressDialog mProgressDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setTitle(R.string.cities_title);
         setContentView(R.layout.activity_city_list);
 
-        mCities = CityLab.build(getApplicationContext()).getCities();
-        UpdateCitiesTask updateCitiesTask = new UpdateCitiesTask();
-        updateCitiesTask.execute(mCities);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshContent();
+            }
+        });
 
-        ListView cityList = (ListView) findViewById(android.R.id.list);
+        mCities = CityLab.build(getApplicationContext()).getCities();
+        UpdateCitiesTask initiateCitiesTask = new UpdateCitiesTask();
+        initiateCitiesTask.execute(mCities);
+
+
+        mCityList = (ListView) findViewById(android.R.id.list);
         mAdapter = new CityAdapter(mCities);
-        cityList.setAdapter(mAdapter);
+        mCityList.setAdapter(mAdapter);
+    }
+
+    private void refreshContent() {
+        mCities = CityLab.build(getApplicationContext()).getCities();
+        final UpdateCitiesTask refreshCitiesTask = new UpdateCitiesTask();
+        refreshCitiesTask.execute(mCities);
+        mAdapter.notifyDataSetChanged();
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private class CityAdapter extends ArrayAdapter<City> {
@@ -83,9 +108,19 @@ public class CityListActivity extends ListActivity {
 
     public class UpdateCitiesTask extends AsyncTask<ArrayList<City>, Void, Void> {
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressDialog = new ProgressDialog(CityListActivity.this);
+            if(!mSwipeRefreshLayout.isShown()) {
+                mProgressDialog.setMessage(getString(R.string.downloading_data));
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
+            }
+        }
+        @Override
         protected Void doInBackground(ArrayList<City>... citiesArray) {
             String responseBody = "";
-            if (citiesArray.length == 1){
+            if (citiesArray.length == 1 && citiesArray[0] != null){
                 ArrayList<City> cities = citiesArray[0];
                 try {
                     URL url = provideURL(cities);
@@ -119,7 +154,7 @@ public class CityListActivity extends ListActivity {
                     // Exception while reading data from url connection
                 }
             } else {
-                Log.e(LOG_TAG, "UpdateCitiesTask: Incorrect params array size");
+                Log.e(LOG_TAG, "UpdateCitiesTask: Incorrect params");
             }
             return null;
         }
@@ -129,7 +164,7 @@ public class CityListActivity extends ListActivity {
                 JSONObject responseJsonObject = new JSONObject(responseBody);
                 JSONArray listJsonArray = responseJsonObject.getJSONArray("list");
                 if (cities.size() == listJsonArray.length()){
-                    for(int i=0; i<=listJsonArray.length() ;i++)
+                    for(int i=0; i < listJsonArray.length() ;i++)
                     {
                         JSONObject cityJsonObject = listJsonArray.getJSONObject(i);
                         cities.get(i).setName(cityJsonObject.getString("name"));
@@ -150,6 +185,12 @@ public class CityListActivity extends ListActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             mAdapter.notifyDataSetChanged();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mProgressDialog.dismiss();
+                }
+            }, 500);
         }
     }
 
