@@ -6,4 +6,10 @@
     <string name="downloading_data">Initializing weather info</string>
     <string name="network_error">Network error. \nPlease, check your network \nconnection and try again.</string>
     <string name="btnRefresh">REFRESH</string>
+    <string name="addCityDialogTitle">Add City</string>
+    <string name="addCityDialogContent">Please, set city name</string>
+    <string name="addCityDialogOk">Add</string>
+    <string name="addCityDialogCancel">Cancel</string>
+    <string name="input_hint">city name</string>
+    <string name="input_prefill"></string>
 </resources>

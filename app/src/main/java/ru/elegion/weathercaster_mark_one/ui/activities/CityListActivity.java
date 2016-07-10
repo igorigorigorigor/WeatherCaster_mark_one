@@ -11,9 +11,11 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,6 +100,26 @@ public class CityListActivity extends Activity {
         mCityList.setAdapter(mAdapter);
 
         setBooleanPreference("IS_FIRST_LAUNCH", false);
+
+        FloatingActionButton btnAddCity = (FloatingActionButton) findViewById(R.id.btnAddCity);
+        btnAddCity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(CityListActivity.this)
+                        .title(R.string.addCityDialogTitle)
+                        .inputRangeRes(1, 30, R.color.material_red_500)
+                        .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS)
+                        .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                // Do something
+                            }})
+                        .positiveText(R.string.addCityDialogOk)
+                        .negativeText(R.string.addCityDialogCancel)
+                        .show();
+            }
+        });
+
     }
 
     private void setBooleanPreference(String setting, boolean value) {
