@@ -1,5 +1,6 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,7 +12,10 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -39,13 +43,14 @@ import ru.elegion.weathercaster_mark_one.models.City;
 import ru.elegion.weathercaster_mark_one.models.CityLab;
 import ru.elegion.weathercaster_mark_one.R;
 
-public class CityListActivity extends ListActivity {
+public class CityListActivity extends Activity {
     private static String LOG_TAG = "CityListActivity";
     private CityLab mCityLab;
     private CityAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ListView mCityList;
+    private RecyclerView mCityList;
     private ProgressDialog mProgressDialog;
+    private LinearLayoutManager mLayoutManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,7 +88,10 @@ public class CityListActivity extends ListActivity {
         initiateCitiesTask.execute(mCityLab.getCities());
 
 
-        mCityList = (ListView) findViewById(android.R.id.list);
+        mCityList = (RecyclerView) findViewById(android.R.id.list);
+        mCityList.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mCityList.setLayoutManager(mLayoutManager);
         mAdapter = new CityAdapter(mCityLab.getCities());
         mCityList.setAdapter(mAdapter);
 
@@ -117,25 +125,40 @@ public class CityListActivity extends ListActivity {
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    private class CityAdapter extends ArrayAdapter<City> {
+    private class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
+        private ArrayList<City> mDataset;
+
         public CityAdapter (ArrayList<City> cities) {
-            super(CityListActivity.this, 0, cities);
+            this.mDataset = cities;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null){
-                convertView = CityListActivity.this.getLayoutInflater().inflate(R.layout.list_item_city, null);
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_city, viewGroup, false);
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int i) {
+            City city = mDataset.get(i);
+            viewHolder.nameTextView.setText(city.getName());
+            viewHolder.tempTextView.setText(city.getTemp());
+        }
+
+        @Override
+        public int getItemCount() {
+            return mDataset.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            private TextView nameTextView;
+            private TextView tempTextView;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                nameTextView = (TextView) itemView.findViewById(R.id.city_list_item_nameTextView);
+                tempTextView = (TextView) itemView.findViewById(R.id.city_list_item_tempTextView);
             }
-            City city = getItem(position);
-
-            TextView nameTextView = (TextView) convertView.findViewById(R.id.city_list_item_nameTextView);
-            nameTextView.setText(city.getName());
-
-            TextView tempTextView = (TextView) convertView.findViewById(R.id.city_list_item_tempTextView);
-            tempTextView.setText(city.getTemp());
-
-            return convertView;
         }
     }
 
