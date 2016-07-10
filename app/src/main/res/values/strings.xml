@@ -12,4 +12,5 @@
     <string name="addCityDialogCancel">Cancel</string>
     <string name="input_hint">city name</string>
     <string name="input_prefill"></string>
+    <string name="cities_limit_error">You have reached the limit of 10 cities</string>
 </resources>

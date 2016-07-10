@@ -42,6 +42,25 @@ public class CityLab {
         mDBHelper.close();
     }
 
+    public void addCity(City city){
+        mCities.add(city);
+
+        if (mDBHelper == null) {
+            mDBHelper = new DBHelper(mAppContext);
+        }
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        Log.d(LOG_TAG, "--- Insert in cities: ---");
+        cv.put("id", city.getId());
+        cv.put("name", city.getName());
+        cv.put("temp", city.getTemp());
+        long rowID = db.insert("cities", null, cv);
+        Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+
+        mDBHelper.close();
+    }
+
     private CityLab(Context appContext) {
         mAppContext = appContext;
         mCities = new ArrayList<City>();
@@ -88,7 +107,7 @@ public class CityLab {
     }
 
     private class DBHelper extends SQLiteOpenHelper {
-        private String[] mInitialCityIDs = {"5202009", "498817", "1496747", "554234", "491422", "839788", "1486209", "472757", "551487", "2013348"};
+        private String[] mInitialCityIDs = {"5202009", "498817", "554234", "491422", "551487"};
 
         public DBHelper(Context context) {
             super(context, "myDB", null, 1);
@@ -106,7 +125,7 @@ public class CityLab {
                     + "name text,"
                     + "temp text" + ");");
 
-            for (int i=0; i < mInitialCityIDs.length; i++){
+            for (int i = 0; i < mInitialCityIDs.length; i++){
                 ContentValues cv = new ContentValues();
                 Log.d(LOG_TAG, "--- Insert in cities: ---");
                 cv.put("id", mInitialCityIDs[i]);

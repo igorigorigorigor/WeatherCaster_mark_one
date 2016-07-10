@@ -1,7 +1,6 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,11 +19,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -105,21 +103,29 @@ public class CityListActivity extends Activity {
         btnAddCity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MaterialDialog.Builder(CityListActivity.this)
-                        .title(R.string.addCityDialogTitle)
-                        .inputRangeRes(1, 30, R.color.material_red_500)
-                        .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS)
-                        .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                // Do something
-                            }})
-                        .positiveText(R.string.addCityDialogOk)
-                        .negativeText(R.string.addCityDialogCancel)
-                        .show();
-            }
-        });
-
+                if (mCityLab.getCities().size() < 11 ){
+                    new MaterialDialog.Builder(CityListActivity.this)
+                            .title(R.string.addCityDialogTitle)
+                            .inputRangeRes(1, 30, R.color.material_red_500)
+                            .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS)
+                            .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+                                @Override
+                                public void onInput(MaterialDialog dialog, CharSequence input) {
+                                    ArrayList<City> newCities = new ArrayList<City>();
+                                    City newCity = new City();
+                                    newCity.setName(input.toString());
+                                    newCities.add(newCity);
+                                    UpdateCitiesTask addCityTask = new UpdateCitiesTask();
+                                    addCityTask.execute(newCities);
+                                }})
+                            .positiveText(R.string.addCityDialogOk)
+                            .negativeText(R.string.addCityDialogCancel)
+                            .show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.cities_limit_error, Toast.LENGTH_SHORT).show();
+                }
+            };
+         });
     }
 
     private void setBooleanPreference(String setting, boolean value) {
@@ -143,6 +149,7 @@ public class CityListActivity extends Activity {
     }
 
     private void refreshContent() {
+        mCityLab = CityLab.build(getApplicationContext());
         final UpdateCitiesTask refreshCitiesTask = new UpdateCitiesTask();
         refreshCitiesTask.execute(mCityLab.getCities());
         mAdapter.notifyDataSetChanged();
@@ -223,7 +230,11 @@ public class CityListActivity extends Activity {
                         while ((line = r.readLine()) != null) {
                             responseBody += line + "\n";
                         }
-                        mCityLab.updateCities(parseResponseAndUpdateCities(cities, responseBody));
+                        if (cities.size() == 1){
+                            mCityLab.addCity(parseResponseAndUpdateCities(cities.get(0), responseBody));
+                        } else {
+                            mCityLab.updateCities(parseListResponseAndUpdateCities(cities, responseBody));
+                        }
                         close(r);
                         urlConnection.disconnect();
                         // Background work finished successfully
@@ -249,7 +260,7 @@ public class CityListActivity extends Activity {
             return null;
         }
 
-        private ArrayList<City> parseResponseAndUpdateCities(ArrayList<City> cities, String responseBody) {
+        private ArrayList<City> parseListResponseAndUpdateCities(ArrayList<City> cities, String responseBody) {
             try {
                 JSONObject responseJsonObject = new JSONObject(responseBody);
                 JSONArray listJsonArray = responseJsonObject.getJSONArray("list");
@@ -257,6 +268,7 @@ public class CityListActivity extends Activity {
                     for(int i=0; i < listJsonArray.length() ;i++)
                     {
                         JSONObject cityJsonObject = listJsonArray.getJSONObject(i);
+                        cities.get(i).setName(cityJsonObject.getString("id"));
                         cities.get(i).setName(cityJsonObject.getString("name"));
                         String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
                         cities.get(i).setTemp(temp + " \u2103");
@@ -265,6 +277,20 @@ public class CityListActivity extends Activity {
                 } else {
                     Log.e(LOG_TAG, "ResponseBody JSONArray size is not equal to cities list size");
                 }
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "JSONException Data: " + responseBody);
+                e.printStackTrace();
+            }
+            return null;
+        }
+        private City parseResponseAndUpdateCities(City city, String responseBody) {
+            try {
+                JSONObject cityJsonObject = new JSONObject(responseBody);
+                city.setName(cityJsonObject.getString("id"));
+                city.setName(cityJsonObject.getString("name"));
+                String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
+                city.setTemp(temp + " \u2103");
+                return city;
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "JSONException Data: " + responseBody);
                 e.printStackTrace();
@@ -290,16 +316,18 @@ public class CityListActivity extends Activity {
 
         StringBuilder urlBuilder = new StringBuilder(getString(R.string.API_BASE_URL));
 
-        urlBuilder.append("group?id=");
-        if (cities.size() == 1) {
-            urlBuilder.append(cities.get(0).getId());
-        } else {
+        if (cities.size() == 1 && cities.get(0).getName() != null){
+            urlBuilder.append("weather?q=");
+            urlBuilder.append(cities.get(0).getName());
+        } else if (cities.size() > 1){
+            urlBuilder.append("group?id=");
             urlBuilder.append(cities.get(0).getId());
             for (int i = 1; i < cities.size(); i++){
                 urlBuilder.append(",").append(cities.get(i).getId());
             }
+        } else {
+            return null;
         }
-
         urlBuilder.append("&units=metric");
         urlBuilder.append("&mode=json");
         final String apiKey = getString(R.string.API_KEY);
