@@ -61,6 +61,24 @@ public class CityLab {
         mDBHelper.close();
     }
 
+    public void delete(City city){
+        mCities.remove(city);
+        if (mDBHelper == null) {
+            mDBHelper = new DBHelper(mAppContext);
+        }
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        Log.d(LOG_TAG, "--- Insert in cities: ---");
+        cv.put("id", city.getId());
+        cv.put("name", city.getName());
+        cv.put("temp", city.getTemp());
+        long rowID = db.delete("cities", "id = ?", new String[]{city.getId()});
+        Log.d(LOG_TAG, "row deleted, ID = " + rowID);
+
+        mDBHelper.close();
+    }
+
     private CityLab(Context appContext) {
         mAppContext = appContext;
         mCities = new ArrayList<City>();
@@ -97,11 +115,9 @@ public class CityLab {
         return sCityLab;
     }
 
-    public City getCity(String cityId) {
-        for (City city : mCities) {
-            if (city.getId().equalsIgnoreCase(cityId)) {
-                return city;
-            }
+    public City getCity(int position) {
+        if (position > 0 && position < mCities.size()){
+            return mCities.get(position - 1);
         }
         return null;
     }

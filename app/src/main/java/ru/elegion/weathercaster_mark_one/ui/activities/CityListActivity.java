@@ -209,7 +209,8 @@ public class CityListActivity extends Activity {
         }
 
         public void remove(int position ) {
-            mDataset.remove(position);
+            mCityLab.delete(mDataset.get(position - 1));
+            mDataset = mCityLab.getCities();
             notifyItemRemoved(position);
         }
     }
