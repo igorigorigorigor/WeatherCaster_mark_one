@@ -35,6 +35,7 @@ public class CityLab {
         for (City city : mCities) {
             cv.put("id", city.getId());
             cv.put("name", city.getName());
+            cv.put("country", city.getCountry());
             cv.put("temp", city.getTemp());
             int updCount = db.update("cities", cv, "id = ?", new String[]{city.getId()});
             Log.d(LOG_TAG, "updated rows count = " + updCount);
@@ -54,6 +55,7 @@ public class CityLab {
         Log.d(LOG_TAG, "--- Insert in cities: ---");
         cv.put("id", city.getId());
         cv.put("name", city.getName());
+        cv.put("country", city.getCountry());
         cv.put("temp", city.getTemp());
         long rowID = db.insert("cities", null, cv);
         Log.d(LOG_TAG, "row inserted, ID = " + rowID);
@@ -67,12 +69,7 @@ public class CityLab {
             mDBHelper = new DBHelper(mAppContext);
         }
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        ContentValues cv = new ContentValues();
 
-        Log.d(LOG_TAG, "--- Insert in cities: ---");
-        cv.put("id", city.getId());
-        cv.put("name", city.getName());
-        cv.put("temp", city.getTemp());
         long rowID = db.delete("cities", "id = ?", new String[]{city.getId()});
         Log.d(LOG_TAG, "row deleted, ID = " + rowID);
 
@@ -90,16 +87,19 @@ public class CityLab {
         if (c.moveToFirst()) {
             int idColIndex = c.getColumnIndex("id");
             int nameColIndex = c.getColumnIndex("name");
+            int countryColIndex = c.getColumnIndex("country");
             int tempColIndex = c.getColumnIndex("temp");
 
             do {
                 Log.d(LOG_TAG,
                         "ID = " + c.getInt(idColIndex) + ", name = "
-                                + c.getString(nameColIndex) + ", temp = "
+                                + c.getString(nameColIndex) + ", country = "
+                                + c.getString(countryColIndex) + ", temp = "
                                 + c.getString(tempColIndex));
                 City city = new City();
                 city.setId(c.getString(idColIndex));
                 city.setName(c.getString(nameColIndex));
+                city.setCountry(c.getString(countryColIndex));
                 city.setTemp(c.getString(tempColIndex));
                 mCities.add(city);
             } while (c.moveToNext());
@@ -124,7 +124,7 @@ public class CityLab {
     }
 
     private class DBHelper extends SQLiteOpenHelper {
-        private String[] mInitialCityIDs = {"5202009", "498817", "554234", "491422", "551487"};
+        private final String[] mInitialCityIDs = {"524901", "498817", "554234", "491422", "551487"};
 
         public DBHelper(Context context) {
             super(context, "myDB", null, 1);
@@ -140,6 +140,7 @@ public class CityLab {
             db.execSQL("create table cities ("
                     + "id integer primary key,"
                     + "name text,"
+                    + "country text,"
                     + "temp text" + ");");
 
             for (int i = 0; i < mInitialCityIDs.length; i++){

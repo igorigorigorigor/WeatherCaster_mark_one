@@ -195,7 +195,7 @@ public class CityListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int i) {
             City city = mDataset.get(i);
-            viewHolder.nameTextView.setText(city.getName());
+            viewHolder.nameTextView.setText(city.getName() + ", " + city.getCountry());
             viewHolder.tempTextView.setText(city.getTemp());
         }
 
@@ -301,6 +301,7 @@ public class CityListActivity extends AppCompatActivity {
                         JSONObject cityJsonObject = listJsonArray.getJSONObject(i);
                         cities.get(i).setName(cityJsonObject.getString("id"));
                         cities.get(i).setName(cityJsonObject.getString("name"));
+                        cities.get(i).setCountry(cityJsonObject.getJSONObject("sys").getString("country"));
                         String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
                         cities.get(i).setTemp(temp + " \u2103");
                     }
@@ -319,6 +320,7 @@ public class CityListActivity extends AppCompatActivity {
                 JSONObject cityJsonObject = new JSONObject(responseBody);
                 city.setName(cityJsonObject.getString("id"));
                 city.setName(cityJsonObject.getString("name"));
+                city.setCountry(cityJsonObject.getJSONObject("sys").getString("country"));
                 String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
                 city.setTemp(temp + " \u2103");
                 return city;

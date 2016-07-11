@@ -10,7 +10,6 @@
     <string name="addCityDialogContent">Please, set city name</string>
     <string name="addCityDialogOk">Add</string>
     <string name="addCityDialogCancel">Cancel</string>
-    <string name="city_name_hint">city name (e.g. Kazan)</string>
     <string name="empty_prefill"></string>
     <string name="cities_limit_error">You have reached the limit of 10 cities</string>
     <string name="country_code_hint">country code (e.g. ru)</string>
