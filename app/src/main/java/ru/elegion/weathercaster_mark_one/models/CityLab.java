@@ -19,11 +19,10 @@ public class CityLab {
     private ArrayList<City> mCities;
     private static CityLab sCityLab;
 
-    //{"_id":551487,"name":"Kazan","country":"RU","coord":{"lon":49.122139,"lat":55.788738}}
-
     public ArrayList<City> getCities() {
         return mCities;
     }
+
     public void updateCities(ArrayList<City> cities) {
         mCities = cities;
     }
