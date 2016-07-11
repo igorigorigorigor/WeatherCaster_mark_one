@@ -149,7 +149,6 @@ public class CityListActivity extends Activity {
     }
 
     private void refreshContent() {
-        mCityLab = CityLab.build(getApplicationContext());
         final UpdateCitiesTask refreshCitiesTask = new UpdateCitiesTask();
         refreshCitiesTask.execute(mCityLab.getCities());
         mAdapter.notifyDataSetChanged();
@@ -264,7 +263,8 @@ public class CityListActivity extends Activity {
             try {
                 JSONObject responseJsonObject = new JSONObject(responseBody);
                 JSONArray listJsonArray = responseJsonObject.getJSONArray("list");
-                if (cities.size() == listJsonArray.length()){
+                // TODO: find out, why api returns less cities in response
+                if (cities.size() >= listJsonArray.length()){
                     for(int i=0; i < listJsonArray.length() ;i++)
                     {
                         JSONObject cityJsonObject = listJsonArray.getJSONObject(i);
