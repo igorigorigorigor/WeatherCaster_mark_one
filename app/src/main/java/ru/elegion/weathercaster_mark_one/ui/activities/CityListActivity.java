@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -96,6 +97,22 @@ public class CityListActivity extends Activity {
         mCityList.setLayoutManager(mLayoutManager);
         mAdapter = new CityAdapter(mCityLab.getCities());
         mCityList.setAdapter(mAdapter);
+
+        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int swipedPosition = viewHolder.getAdapterPosition();
+                CityAdapter adapter = (CityAdapter)mCityList.getAdapter();
+                adapter.remove(swipedPosition);
+            }
+        });
+        mItemTouchHelper.attachToRecyclerView(mCityList);
 
         setBooleanPreference("IS_FIRST_LAUNCH", false);
 
@@ -189,6 +206,11 @@ public class CityListActivity extends Activity {
                 nameTextView = (TextView) itemView.findViewById(R.id.city_list_item_nameTextView);
                 tempTextView = (TextView) itemView.findViewById(R.id.city_list_item_tempTextView);
             }
+        }
+
+        public void remove(int position ) {
+            mDataset.remove(position);
+            notifyItemRemoved(position);
         }
     }
 
