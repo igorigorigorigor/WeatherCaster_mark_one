@@ -12,12 +12,14 @@ import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -46,7 +48,7 @@ import ru.elegion.weathercaster_mark_one.models.City;
 import ru.elegion.weathercaster_mark_one.models.CityLab;
 import ru.elegion.weathercaster_mark_one.R;
 
-public class CityListActivity extends Activity {
+public class CityListActivity extends AppCompatActivity {
     private static String LOG_TAG = "CityListActivity";
     private CityLab mCityLab;
     private CityAdapter mAdapter;
@@ -61,7 +63,7 @@ public class CityListActivity extends Activity {
 
         setTitle(R.string.cities_title);
         setContentView(R.layout.activity_city_list);
-
+        getSupportActionBar().show();
         if (getBooleanPreference("IS_FIRST_LAUNCH") && !isNetworkConnected()){
             setContentView(R.layout.activity_network_error);
             FrameLayout frmNetworkError = (FrameLayout) findViewById(R.id.flNetworkError);
@@ -143,6 +145,12 @@ public class CityListActivity extends Activity {
                 }
             };
          });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     private void setBooleanPreference(String setting, boolean value) {
