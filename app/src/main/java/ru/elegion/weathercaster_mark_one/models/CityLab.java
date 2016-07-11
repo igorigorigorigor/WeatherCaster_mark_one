@@ -106,6 +106,7 @@ public class CityLab {
         } else
             Log.d(LOG_TAG, "0 rows");
         c.close();
+        mDBHelper.close();
     }
 
     public static CityLab build(Context c) {

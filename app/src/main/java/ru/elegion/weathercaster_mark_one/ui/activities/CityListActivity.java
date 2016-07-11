@@ -63,7 +63,7 @@ public class CityListActivity extends AppCompatActivity {
 
         setTitle(R.string.cities_title);
         setContentView(R.layout.activity_city_list);
-        getSupportActionBar().show();
+
         if (getBooleanPreference("IS_FIRST_LAUNCH") && !isNetworkConnected()){
             setContentView(R.layout.activity_network_error);
             FrameLayout frmNetworkError = (FrameLayout) findViewById(R.id.flNetworkError);
