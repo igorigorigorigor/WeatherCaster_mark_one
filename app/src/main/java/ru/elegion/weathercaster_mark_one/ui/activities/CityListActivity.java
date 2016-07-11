@@ -3,6 +3,7 @@ package ru.elegion.weathercaster_mark_one.ui.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,7 +92,6 @@ public class CityListActivity extends AppCompatActivity {
         mCityLab = CityLab.build(getApplicationContext());
         UpdateCitiesTask initiateCitiesTask = new UpdateCitiesTask();
         initiateCitiesTask.execute(mCityLab.getCities());
-
 
         mCityList = (RecyclerView) findViewById(android.R.id.list);
         mCityList.setHasFixedSize(true);
@@ -196,6 +197,7 @@ public class CityListActivity extends AppCompatActivity {
         public void onBindViewHolder(ViewHolder viewHolder, int i) {
             City city = mDataset.get(i);
             viewHolder.nameTextView.setText(city.getName() + ", " + city.getCountry());
+            viewHolder.iconImageView.setImageBitmap(city.getIconBitmap());
             viewHolder.tempTextView.setText(city.getTemp());
         }
 
@@ -206,11 +208,13 @@ public class CityListActivity extends AppCompatActivity {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             private TextView nameTextView;
+            private ImageView iconImageView;
             private TextView tempTextView;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 nameTextView = (TextView) itemView.findViewById(R.id.city_list_item_nameTextView);
+                iconImageView= (ImageView) itemView.findViewById(R.id.city_list_item_iconImageView);
                 tempTextView = (TextView) itemView.findViewById(R.id.city_list_item_tempTextView);
             }
         }
@@ -220,6 +224,15 @@ public class CityListActivity extends AppCompatActivity {
             mDataset = mCityLab.getCities();
             notifyItemRemoved(position);
         }
+    }
+
+    private URL iconRequestURL(String param) throws MalformedURLException {
+        // http://openweathermap.org/img/w/10d.png
+
+        StringBuilder urlBuilder = new StringBuilder(getString(R.string.API_IMAGES_URL));
+        urlBuilder.append(param);
+        urlBuilder.append(".png");
+        return new URL(urlBuilder.toString());
     }
 
     private static void close(Closeable x) {
@@ -249,7 +262,8 @@ public class CityListActivity extends AppCompatActivity {
             if (citiesArray.length == 1 && citiesArray[0] != null){
                 ArrayList<City> cities = citiesArray[0];
                 try {
-                    URL url = provideURL(cities);
+                    // Get weather data
+                    URL url = weatherGroupRequestURL(cities);
                     if (url == null){return null;}
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     if (urlConnection.getResponseCode() == 200) {
@@ -263,13 +277,12 @@ public class CityListActivity extends AppCompatActivity {
                         if (cities.size() == 1){
                             mCityLab.addCity(parseResponseAndUpdateCities(cities.get(0), responseBody));
                         } else {
-                            mCityLab.updateCities(parseListResponseAndUpdateCities(cities, responseBody));
+                            mCityLab.updateCitiesInDB(parseListResponseAndUpdateCities(cities, responseBody));
                         }
                         close(r);
                         urlConnection.disconnect();
                         // Background work finished successfully
                         Log.i(LOG_TAG, "UpdateCitiesTask: done successfully");
-                        // Save date/time for latest successful result
                     }
                     else if (urlConnection.getResponseCode() == 429) {
                         // Too many requests
@@ -279,10 +292,25 @@ public class CityListActivity extends AppCompatActivity {
                         // Bad response from server
                         Log.i(LOG_TAG, "UpdateCitiesTask: bad response");
                     }
+
+                    // Get weather icons
+                    for (City city : cities) {
+                        url = iconRequestURL(city.getIcon());
+                        if (url == null) {
+                            return null;
+                        }
+                        urlConnection = (HttpURLConnection) url.openConnection();
+                        if (urlConnection.getResponseCode() == 200) {
+                            city.setIconBitmap(BitmapFactory.decodeStream(urlConnection.getInputStream()));
+                            urlConnection.disconnect();
+                            Log.i(LOG_TAG, "UpdateCitiesTask: done successfully");
+                        }
+                        urlConnection.disconnect();
+                        mCityLab.updateCities(cities);
+                    }
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "UpdateCitiesTask Exception");
                     e.printStackTrace();
-                    // Exception while reading data from url connection
                 }
             } else {
                 Log.e(LOG_TAG, "UpdateCitiesTask: Incorrect params");
@@ -294,7 +322,7 @@ public class CityListActivity extends AppCompatActivity {
             try {
                 JSONObject responseJsonObject = new JSONObject(responseBody);
                 JSONArray listJsonArray = responseJsonObject.getJSONArray("list");
-                // TODO: find out, why api returns less cities in response
+                // TODO: find out, why API returns less cities in response
                 if (cities.size() >= listJsonArray.length()){
                     for(int i=0; i < listJsonArray.length() ;i++)
                     {
@@ -302,6 +330,7 @@ public class CityListActivity extends AppCompatActivity {
                         cities.get(i).setName(cityJsonObject.getString("id"));
                         cities.get(i).setName(cityJsonObject.getString("name"));
                         cities.get(i).setCountry(cityJsonObject.getJSONObject("sys").getString("country"));
+                        cities.get(i).setIcon(cityJsonObject.getJSONArray("weather").getJSONObject(0).getString("icon"));
                         String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
                         cities.get(i).setTemp(temp + " \u2103");
                     }
@@ -321,6 +350,7 @@ public class CityListActivity extends AppCompatActivity {
                 city.setName(cityJsonObject.getString("id"));
                 city.setName(cityJsonObject.getString("name"));
                 city.setCountry(cityJsonObject.getJSONObject("sys").getString("country"));
+                city.setIcon(cityJsonObject.getJSONArray("weather").getJSONObject(0).getString("icon"));
                 String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
                 city.setTemp(temp + " \u2103");
                 return city;
@@ -344,7 +374,7 @@ public class CityListActivity extends AppCompatActivity {
         }
     }
 
-    private URL provideURL(ArrayList<City> cities) throws UnsupportedEncodingException, MalformedURLException {
+    private URL weatherGroupRequestURL(ArrayList<City> cities) throws UnsupportedEncodingException, MalformedURLException {
         // http://api.openweathermap.org/data/2.5/group?id=524901,703448,2643743&units=metric
 
         StringBuilder urlBuilder = new StringBuilder(getString(R.string.API_BASE_URL));

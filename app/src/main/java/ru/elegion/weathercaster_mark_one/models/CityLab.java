@@ -26,6 +26,9 @@ public class CityLab {
     }
     public void updateCities(ArrayList<City> cities) {
         mCities = cities;
+    }
+    public void updateCitiesInDB(ArrayList<City> cities) {
+        mCities = cities;
         if (mDBHelper == null) {
             mDBHelper = new DBHelper(mAppContext);
         }
@@ -36,6 +39,7 @@ public class CityLab {
             cv.put("id", city.getId());
             cv.put("name", city.getName());
             cv.put("country", city.getCountry());
+            cv.put("icon", city.getIcon());
             cv.put("temp", city.getTemp());
             int updCount = db.update("cities", cv, "id = ?", new String[]{city.getId()});
             Log.d(LOG_TAG, "updated rows count = " + updCount);
@@ -56,6 +60,7 @@ public class CityLab {
         cv.put("id", city.getId());
         cv.put("name", city.getName());
         cv.put("country", city.getCountry());
+        cv.put("icon", city.getIcon());
         cv.put("temp", city.getTemp());
         long rowID = db.insert("cities", null, cv);
         Log.d(LOG_TAG, "row inserted, ID = " + rowID);
@@ -88,18 +93,21 @@ public class CityLab {
             int idColIndex = c.getColumnIndex("id");
             int nameColIndex = c.getColumnIndex("name");
             int countryColIndex = c.getColumnIndex("country");
+            int iconColIndex = c.getColumnIndex("icon");
             int tempColIndex = c.getColumnIndex("temp");
 
             do {
                 Log.d(LOG_TAG,
                         "ID = " + c.getInt(idColIndex) + ", name = "
                                 + c.getString(nameColIndex) + ", country = "
-                                + c.getString(countryColIndex) + ", temp = "
+                                + c.getString(countryColIndex) + ", icon = "
+                                + c.getString(iconColIndex) + ", temp = "
                                 + c.getString(tempColIndex));
                 City city = new City();
                 city.setId(c.getString(idColIndex));
                 city.setName(c.getString(nameColIndex));
                 city.setCountry(c.getString(countryColIndex));
+                city.setIcon(c.getString(iconColIndex));
                 city.setTemp(c.getString(tempColIndex));
                 mCities.add(city);
             } while (c.moveToNext());
@@ -141,6 +149,7 @@ public class CityLab {
                     + "id integer primary key,"
                     + "name text,"
                     + "country text,"
+                    + "icon text,"
                     + "temp text" + ");");
 
             for (int i = 0; i < mInitialCityIDs.length; i++){
