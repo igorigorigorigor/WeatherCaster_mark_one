@@ -1,0 +1,25 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="ru.elegion.weathercaster_mark_one.ui.activities.CityFragment">
+
+    <RelativeLayout
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_centerHorizontal="true"
+            android:id="@+id/iconImageView"
+            android:minHeight="?android:attr/listPreferredItemHeightSmall"
+            android:layout_height="@dimen/md_icon_max_size"
+            android:layout_width="@dimen/md_icon_max_size"/>
+        <TextView
+            android:layout_gravity=""
+            android:id="@+id/tvLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iconImageView"
+            android:textSize="25sp"/>
+    </RelativeLayout>
+</FrameLayout>

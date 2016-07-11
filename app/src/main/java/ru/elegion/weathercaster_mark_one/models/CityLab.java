@@ -124,8 +124,17 @@ public class CityLab {
     }
 
     public City getCity(int position) {
-        if (position > 0 && position < mCities.size()){
-            return mCities.get(position - 1);
+        if (position >= 0 && position < mCities.size()){
+            return mCities.get(position);
+        }
+        return null;
+    }
+
+    public City getCity(String id) {
+        for (City city: mCities){
+            if (id.equalsIgnoreCase(city.getId())){
+                return city;
+            }
         }
         return null;
     }

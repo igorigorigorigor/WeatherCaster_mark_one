@@ -1,6 +1,7 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -164,16 +166,25 @@ public class CityListActivity extends BaseActivity {
             return mDataset.size();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
             private TextView nameTextView;
             private ImageView iconImageView;
             private TextView tempTextView;
+            private FrameLayout flCityCard;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 nameTextView = (TextView) itemView.findViewById(R.id.city_list_item_nameTextView);
                 iconImageView= (ImageView) itemView.findViewById(R.id.city_list_item_iconImageView);
                 tempTextView = (TextView) itemView.findViewById(R.id.city_list_item_tempTextView);
+                flCityCard =  (FrameLayout) itemView.findViewById(R.id.city_list_item_frameLayout);
+                flCityCard.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v){
+                Intent i = new Intent(getApplicationContext(), CityActivity.class);
+                startActivity(i);
             }
         }
 
@@ -182,6 +193,8 @@ public class CityListActivity extends BaseActivity {
             mDataset = mCityLab.getCities();
             notifyItemRemoved(position);
         }
+
+
     }
 
 
