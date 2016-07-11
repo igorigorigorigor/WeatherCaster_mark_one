@@ -1,6 +1,5 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -127,7 +126,7 @@ public class CityListActivity extends AppCompatActivity {
                             .title(R.string.addCityDialogTitle)
                             .inputRangeRes(1, 30, R.color.material_red_500)
                             .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS)
-                            .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+                            .input(R.string.city_name_hint, R.string.empty_prefill, new MaterialDialog.InputCallback() {
                                 @Override
                                 public void onInput(MaterialDialog dialog, CharSequence input) {
                                     ArrayList<City> newCities = new ArrayList<City>();
@@ -217,7 +216,7 @@ public class CityListActivity extends AppCompatActivity {
         }
 
         public void remove(int position ) {
-            mCityLab.delete(mDataset.get(position - 1));
+            mCityLab.delete(mDataset.get(position));
             mDataset = mCityLab.getCities();
             notifyItemRemoved(position);
         }
@@ -251,6 +250,7 @@ public class CityListActivity extends AppCompatActivity {
                 ArrayList<City> cities = citiesArray[0];
                 try {
                     URL url = provideURL(cities);
+                    if (url == null){return null;}
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     if (urlConnection.getResponseCode() == 200) {
                         InputStreamReader inputStreamReader = new InputStreamReader(urlConnection.getInputStream());
@@ -279,8 +279,8 @@ public class CityListActivity extends AppCompatActivity {
                         // Bad response from server
                         Log.i(LOG_TAG, "UpdateCitiesTask: bad response");
                     }
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "IOException Data: " + responseBody);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "UpdateCitiesTask Exception");
                     e.printStackTrace();
                     // Exception while reading data from url connection
                 }

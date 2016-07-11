@@ -8,6 +8,8 @@ public class City {
     private String mId;
     private String mTemp;
 
+    private String mCountry;
+
     public String getName() {
         return mName;
     }
@@ -32,4 +34,7 @@ public class City {
            mTemp = currentTemp;
         }
 
+    public String getCountry() { return mCountry; }
+
+    public void setCountry(String country) { mCountry = country; }
 }
