@@ -163,7 +163,8 @@ public class CityLab {
         public void onCreate(SQLiteDatabase db) {
             Log.d(LOG_TAG, "--- onCreate database ---");
             db.execSQL("create table cities ("
-                    + "id integer primary key,"
+                    + "uid integer primary key autoincrement,"
+                    + "id integer,"
                     + "name text,"
                     + "country text,"
                     + "icon text,"
