@@ -8,6 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import java.util.UUID;
+
 import ru.elegion.weathercaster_mark_one.R;
 import ru.elegion.weathercaster_mark_one.models.City;
 import ru.elegion.weathercaster_mark_one.models.CityLab;
@@ -40,5 +42,10 @@ public class CityActivity extends BaseActivity {
                 return mCityLab.getCities().size();
             }
         });
+
+        String cityID = getIntent().getStringExtra(CityLab.getCityIdTag());
+        City currentCity = mCityLab.getCity(cityID);
+        int i = mCityLab.getCities().indexOf(currentCity);
+        mViewPager.setCurrentItem(i);
     }
 }
