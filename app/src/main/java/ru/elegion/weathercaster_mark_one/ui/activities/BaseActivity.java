@@ -1,12 +1,13 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -59,121 +60,140 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     protected boolean isNetworkConnected() {
         ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = (activeNetwork != null) && activeNetwork.isConnectedOrConnecting();
         return isConnected;
     }
 
-    abstract protected class GenericNetworkTask extends AsyncTask<ArrayList<City>, Void, Void> {
+    abstract protected class GenericUpdateCitiesTask extends AsyncTask<ArrayList<City>, Void, Void> {
 
         @Override
         protected Void doInBackground(ArrayList<City>... citiesArray) {
-            String responseBody = "";
             if (citiesArray.length == 1 && citiesArray[0] != null) {
                 ArrayList<City> cities = citiesArray[0];
                 try {
-                    // Get weather data
-                    URL url = weatherGroupRequestURL(cities);
-                    if (url == null) {
-                        return null;
+                    String responseBody = getWeatherDataFromApi(cities);
+                    cities = parseListResponseAndUpdateCities(cities, responseBody);
+                    for (City city:cities){
+                        city.setIconBitmap(getIconFromApi(city));
                     }
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    if (urlConnection.getResponseCode() == 200) {
-                        InputStreamReader inputStreamReader = new InputStreamReader(urlConnection.getInputStream());
-                        BufferedReader r = new BufferedReader(inputStreamReader);
-
-                        String line = null;
-                        while ((line = r.readLine()) != null) {
-                            responseBody += line + "\n";
-                        }
-                        if (cities.size() == 1) {
-                            mCityLab.addCity(parseResponseAndUpdateCities(cities.get(0), responseBody));
-                        } else {
-                            mCityLab.updateCitiesInDB(parseListResponseAndUpdateCities(cities, responseBody));
-                        }
-                        close(r);
-                        urlConnection.disconnect();
-                        // Background work finished successfully
-                        Log.i(LOG_TAG, "UpdateCitiesTask: done successfully");
-                    } else if (urlConnection.getResponseCode() == 429) {
-                        // Too many requests
-                        Log.i(LOG_TAG, "UpdateCitiesTask: too many requests");
-                    } else {
-                        // Bad response from server
-                        Log.i(LOG_TAG, "UpdateCitiesTask: bad response");
-                    }
-
-                    // Get weather icons
-                    for (City city : cities) {
-                        url = iconRequestURL(city.getIcon());
-                        if (url == null) {
-                            return null;
-                        }
-                        urlConnection = (HttpURLConnection) url.openConnection();
-                        if (urlConnection.getResponseCode() == 200) {
-                            city.setIconBitmap(BitmapFactory.decodeStream(urlConnection.getInputStream()));
-                            urlConnection.disconnect();
-                            Log.i(LOG_TAG, "UpdateCitiesTask: done successfully");
-                        }
-                        urlConnection.disconnect();
-                        mCityLab.updateCities(cities);
-                    }
+                    mCityLab.updateCitiesInDB(cities);
                 } catch (Exception e) {
-                    Log.e(LOG_TAG, "UpdateCitiesTask Exception");
+                    Log.e(LOG_TAG, "GenericAddCityTask Exception");
                     e.printStackTrace();
                 }
             } else {
-                Log.e(LOG_TAG, "UpdateCitiesTask: Incorrect params");
-            }
-            return null;
-        }
-
-        private ArrayList<City> parseListResponseAndUpdateCities(ArrayList<City> cities, String responseBody) {
-            try {
-                JSONObject responseJsonObject = new JSONObject(responseBody);
-                JSONArray listJsonArray = responseJsonObject.getJSONArray("list");
-                // TODO: find out, why API returns less cities in response
-                if (cities.size() >= listJsonArray.length()){
-                    for(int i=0; i < listJsonArray.length() ;i++)
-                    {
-                        JSONObject cityJsonObject = listJsonArray.getJSONObject(i);
-                        cities.get(i).setName(cityJsonObject.getString("id"));
-                        cities.get(i).setName(cityJsonObject.getString("name"));
-                        cities.get(i).setCountry(cityJsonObject.getJSONObject("sys").getString("country"));
-                        cities.get(i).setIcon(cityJsonObject.getJSONArray("weather").getJSONObject(0).getString("icon"));
-                        String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
-                        cities.get(i).setTemp(temp + " \u2103");
-                    }
-                    return cities;
-                } else {
-                    Log.e(LOG_TAG, "ResponseBody JSONArray size is not equal to cities list size");
-                }
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "JSONException Data: " + responseBody);
-                e.printStackTrace();
-            }
-            return null;
-        }
-        private City parseResponseAndUpdateCities(City city, String responseBody) {
-            try {
-                JSONObject cityJsonObject = new JSONObject(responseBody);
-                city.setName(cityJsonObject.getString("id"));
-                city.setName(cityJsonObject.getString("name"));
-                city.setCountry(cityJsonObject.getJSONObject("sys").getString("country"));
-                city.setIcon(cityJsonObject.getJSONArray("weather").getJSONObject(0).getString("icon"));
-                String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
-                city.setTemp(temp + " \u2103");
-                return city;
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "JSONException Data: " + responseBody);
-                e.printStackTrace();
+                Log.e(LOG_TAG, "GenericAddCityTask: Incorrect params");
             }
             return null;
         }
     }
 
-    protected URL weatherGroupRequestURL(ArrayList<City> cities) throws UnsupportedEncodingException, MalformedURLException {
+    abstract protected class GenericAddCityTask extends GenericUpdateCitiesTask {
+        @Override
+        protected Void doInBackground(ArrayList<City>... citiesArray) {
+            if (citiesArray.length == 1 && citiesArray[0] != null) {
+                ArrayList<City> cities = citiesArray[0];
+                try {
+                    String responseBody = getWeatherDataFromApi(cities);
+                    City newCity = parseResponseAndUpdateCity(cities.get(0), responseBody);
+                    newCity.setIconBitmap(getIconFromApi(newCity));
+                    mCityLab.addCityToDB(newCity);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "GenericAddCityTask Exception");
+                    e.printStackTrace();
+                }
+            } else {
+                Log.e(LOG_TAG, "GenericAddCityTask: Incorrect params");
+            }
+            return null;
+        }
+    }
+
+    @Nullable
+    private Bitmap getIconFromApi(City city) throws IOException {
+        URL url = iconRequestURL(city.getIcon());
+
+        if (url == null) { return null;  }
+
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        Bitmap icon = null;
+        if (urlConnection.getResponseCode() == 200) {
+            icon = BitmapFactory.decodeStream(urlConnection.getInputStream());
+            urlConnection.disconnect();
+        }
+        urlConnection.disconnect();
+        return icon;
+    }
+
+    @Nullable
+    private String getWeatherDataFromApi(ArrayList<City> cities) throws IOException {
+        URL url = provideRequestURL(cities);
+
+        if (url == null) { return null;  }
+
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        StringBuilder responseBuilder = new StringBuilder();
+        if (urlConnection.getResponseCode() == 200) {
+            InputStreamReader inputStreamReader = new InputStreamReader(urlConnection.getInputStream());
+            BufferedReader r = new BufferedReader(inputStreamReader);
+
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                responseBuilder.append(line).append("\n");
+            }
+            close(r);
+            urlConnection.disconnect();
+            // Background work finished successfully
+            Log.i(LOG_TAG, "getWeatherDataFromApi: done successfully");
+        } else if (urlConnection.getResponseCode() == 429) {
+            // Too many requests
+            Log.i(LOG_TAG, "getWeatherDataFromApi: too many requests");
+        } else {
+            // Bad response from server
+            Log.i(LOG_TAG, "getWeatherDataFromApi: bad response");
+        }
+        return responseBuilder.toString();
+    }
+
+
+    private ArrayList<City> parseListResponseAndUpdateCities(ArrayList<City> outdatedCities, String responseBody) {
+        try {
+            JSONObject responseJsonObject = new JSONObject(responseBody);
+            JSONArray listJsonArray = responseJsonObject.getJSONArray("list");
+            // TODO: find out, why API returns less cities in response
+            if (outdatedCities.size() >= listJsonArray.length()){
+
+                ArrayList<City> updatedCities = new ArrayList<>();
+                for(City city : outdatedCities)
+                {
+                    String cityJSON = listJsonArray.getJSONObject(outdatedCities.indexOf(city)).toString();
+                    updatedCities.add(parseResponseAndUpdateCity(city, cityJSON));
+                }
+                return updatedCities;
+            } else {
+                Log.e(LOG_TAG, "ResponseBody JSONArray size is not equal to cities list size");
+            }
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "JSONException Data: " + responseBody);
+            e.printStackTrace();
+        }
+        return null;
+    }
+    private City parseResponseAndUpdateCity(City city, String responseBody) throws JSONException {
+        JSONObject cityJsonObject = new JSONObject(responseBody);
+        city.setId(cityJsonObject.getString("id"));
+        city.setName(cityJsonObject.getString("name"));
+        city.setCountry(cityJsonObject.getJSONObject("sys").getString("country"));
+        city.setIcon(cityJsonObject.getJSONArray("weather").getJSONObject(0).getString("icon"));
+        String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
+        city.setTemp(temp + " \u2103");
+        return city;
+    }
+
+
+    protected URL provideRequestURL(ArrayList<City> cities) throws UnsupportedEncodingException, MalformedURLException {
         // http://api.openweathermap.org/data/2.5/group?id=524901,703448,2643743&units=metric
 
         StringBuilder urlBuilder = new StringBuilder(getString(R.string.API_BASE_URL));

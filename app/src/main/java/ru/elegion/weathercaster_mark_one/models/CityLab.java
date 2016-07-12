@@ -13,17 +13,26 @@ import java.util.ArrayList;
  * Created by Freeman on 07.07.2016.
  */
 public class CityLab {
+    private static final String CITY_ID_TAG = "ru.elegion.weathercaster_mark_one.city_id";
     private static final String LOG_TAG = "CityLab";
     private final Context mAppContext;
     private DBHelper mDBHelper;
     private ArrayList<City> mCities;
     private static CityLab sCityLab;
 
+    public static String getCityIdTag() {
+        return CITY_ID_TAG;
+    }
+
     public ArrayList<City> getCities() {
         return mCities;
     }
 
     public void updateCities(ArrayList<City> cities) {
+        for (int i = 0; i < cities.size(); i++)
+        {
+            cities.get(i);
+        }
         mCities = cities;
     }
     public void updateCitiesInDB(ArrayList<City> cities) {
@@ -46,7 +55,7 @@ public class CityLab {
         mDBHelper.close();
     }
 
-    public void addCity(City city){
+    public void addCityToDB(City city){
         mCities.add(city);
 
         if (mDBHelper == null) {

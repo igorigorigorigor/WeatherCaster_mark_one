@@ -20,7 +20,6 @@ import ru.elegion.weathercaster_mark_one.models.CityLab;
 
 public class CityFragment extends Fragment {
 
-    private static final String CITY_ID = "ru.elegion.weathercaster_mark_one.city_id";
     private City mCity;
 
     public City getCity() { return mCity; }
@@ -29,7 +28,7 @@ public class CityFragment extends Fragment {
 
     public static CityFragment newInstance(String id) {
         Bundle args = new Bundle();
-        args.putSerializable(CITY_ID, id);
+        args.putSerializable(CityLab.getCityIdTag(), id);
 
         CityFragment fragment = new CityFragment();
         fragment.setArguments(args);
@@ -40,7 +39,7 @@ public class CityFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String id = getArguments().getString(CITY_ID);
+        String id = getArguments().getString(CityLab.getCityIdTag());
         mCity = CityLab.build(getActivity()).getCity(id);
     }
 

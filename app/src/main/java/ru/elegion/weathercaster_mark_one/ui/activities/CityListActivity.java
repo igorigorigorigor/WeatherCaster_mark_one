@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,8 +89,7 @@ public class CityListActivity extends BaseActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int swipedPosition = viewHolder.getAdapterPosition();
-                CityAdapter adapter = (CityAdapter)mCityList.getAdapter();
-                adapter.remove(swipedPosition);
+                mAdapter.remove(swipedPosition);
             }
         });
         mItemTouchHelper.attachToRecyclerView(mCityList);
@@ -114,8 +112,9 @@ public class CityListActivity extends BaseActivity {
                                     City newCity = new City();
                                     newCity.setName(input.toString());
                                     newCities.add(newCity);
-                                    UpdateCitiesTask addCityTask = new UpdateCitiesTask();
+                                    AddCityTask addCityTask = new AddCityTask();
                                     addCityTask.execute(newCities);
+                                    mAdapter.notifyDataSetChanged();
                                 }})
                             .positiveText(R.string.addCityDialogOk)
                             .negativeText(R.string.addCityDialogCancel)
@@ -166,7 +165,7 @@ public class CityListActivity extends BaseActivity {
             return mDataset.size();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
+        class ViewHolder extends RecyclerView.ViewHolder {
             private TextView nameTextView;
             private ImageView iconImageView;
             private TextView tempTextView;
@@ -178,13 +177,15 @@ public class CityListActivity extends BaseActivity {
                 iconImageView= (ImageView) itemView.findViewById(R.id.city_list_item_iconImageView);
                 tempTextView = (TextView) itemView.findViewById(R.id.city_list_item_tempTextView);
                 flCityCard =  (FrameLayout) itemView.findViewById(R.id.city_list_item_frameLayout);
-                flCityCard.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View v){
-                Intent i = new Intent(getApplicationContext(), CityActivity.class);
-                startActivity(i);
+                flCityCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), CityActivity.class);
+                        int position = getAdapterPosition();
+                        i.putExtra(CityLab.getCityIdTag(), mCityLab.getCity(getAdapterPosition()).getId());
+                        startActivity(i);
+                    }
+                });
             }
         }
 
@@ -198,28 +199,51 @@ public class CityListActivity extends BaseActivity {
     }
 
 
-    private class UpdateCitiesTask extends GenericNetworkTask {
+    private class UpdateCitiesTask extends GenericUpdateCitiesTask {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressDialog = new ProgressDialog(CityListActivity.this);
-            if(!mSwipeRefreshLayout.isShown()) {
-                mProgressDialog.setMessage(getString(R.string.downloading_data));
-                mProgressDialog.setCanceledOnTouchOutside(false);
-                mProgressDialog.show();
-            }
+            showProgressDialog();
         }
 
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             mAdapter.notifyDataSetChanged();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mProgressDialog.dismiss();
-                }
-            }, 500);
+            hideProgressDialog();
+        }
+    }
+
+    private class AddCityTask extends GenericAddCityTask {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressDialog();
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            mAdapter.notifyDataSetChanged();
+            hideProgressDialog();
+        }
+    }
+
+    private void hideProgressDialog() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mProgressDialog.dismiss();
+            }
+        }, 500);
+    }
+
+    private void showProgressDialog() {
+        mProgressDialog = new ProgressDialog(CityListActivity.this);
+        if(!mSwipeRefreshLayout.isShown()) {
+            mProgressDialog.setMessage(getString(R.string.downloading_data));
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.show();
         }
     }
 }
