@@ -27,8 +27,8 @@
         <ImageView
             android:id="@+id/city_list_item_iconImageView"
             android:minHeight="?android:attr/listPreferredItemHeightSmall"
-            android:layout_height="@dimen/md_icon_max_size"
-            android:layout_width="@dimen/md_icon_max_size"/>
+            android:layout_height="48dp"
+            android:layout_width="48dp"/>
         <TextView
             android:id="@+id/city_list_item_tempTextView"
             android:layout_width="wrap_content"

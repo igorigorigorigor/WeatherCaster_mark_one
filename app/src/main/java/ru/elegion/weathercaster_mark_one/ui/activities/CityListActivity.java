@@ -1,28 +1,33 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import java.util.ArrayList;
 
 
@@ -101,29 +106,42 @@ public class CityListActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (mCityLab.getCities().size() < 11 ){
-                    new MaterialDialog.Builder(CityListActivity.this)
-                            .title(R.string.addCityDialogTitle)
-                            .inputRangeRes(1, 30, R.color.material_red_500)
-                            .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS)
-                            .input(R.string.city_name_hint, R.string.empty_prefill, new MaterialDialog.InputCallback() {
-                                @Override
-                                public void onInput(MaterialDialog dialog, CharSequence input) {
-                                    ArrayList<City> newCities = new ArrayList<City>();
-                                    City newCity = new City();
-                                    newCity.setName(input.toString());
-                                    newCities.add(newCity);
-                                    AddCityTask addCityTask = new AddCityTask();
-                                    addCityTask.execute(newCities);
-                                    mAdapter.notifyDataSetChanged();
-                                }})
-                            .positiveText(R.string.addCityDialogOk)
-                            .negativeText(R.string.addCityDialogCancel)
-                            .show();
+                    showAlertDialog();
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.cities_limit_error, Toast.LENGTH_SHORT).show();
                 }
             };
          });
+    }
+
+    private void showAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CityListActivity.this);
+        final View dialogView = this.getLayoutInflater().inflate(R.layout.alert_dialog_add_city, null);
+        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_input);
+
+        builder
+                .setTitle("Add city")
+                .setView(dialogView)
+                .setNegativeButton(R.string.addCityDialogCancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                .setPositiveButton(R.string.addCityDialogOk,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                ArrayList<City> newCities = new ArrayList<City>();
+                                City newCity = new City();
+                                newCity.setName(input.getText().toString());
+                                newCities.add(newCity);
+                                AddCityTask addCityTask = new AddCityTask();
+                                addCityTask.execute(newCities);
+                                mAdapter.notifyDataSetChanged();}
+                        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override
