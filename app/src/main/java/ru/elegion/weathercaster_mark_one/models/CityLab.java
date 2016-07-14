@@ -76,14 +76,16 @@ public class CityLab {
         mDBHelper.close();
     }
 
-    public void delete(City city){
-        mCities.remove(city);
+    public void remove(int position) {
+        String removedCityID = mCities.get(position).getId();
+        mCities.remove(position);
+
         if (mDBHelper == null) {
             mDBHelper = new DBHelper(mAppContext);
         }
+        
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-
-        long rowID = db.delete("cities", "id = ?", new String[]{city.getId()});
+        long rowID = db.delete("cities", "id = ?", new String[]{removedCityID});
         Log.d(LOG_TAG, "row deleted, ID = " + rowID);
 
         mDBHelper.close();

@@ -90,7 +90,7 @@ abstract public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    abstract protected class GenericAddCityTask extends GenericUpdateCitiesTask {
+    abstract protected class GenericAddCityTask extends AsyncTask<ArrayList<City>, Void, Void> {
         @Override
         protected Void doInBackground(ArrayList<City>... citiesArray) {
             if (citiesArray.length == 1 && citiesArray[0] != null) {
