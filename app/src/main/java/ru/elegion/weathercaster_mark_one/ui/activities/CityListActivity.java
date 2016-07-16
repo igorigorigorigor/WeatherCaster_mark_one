@@ -182,7 +182,7 @@ public class CityListActivity extends BaseActivity {
 
         public void updateDataset() {
             mCities = mCityLab.getCities();
-            notifyItemInserted(mCities.size());
+            notifyDataSetChanged();
         }
     }
 
