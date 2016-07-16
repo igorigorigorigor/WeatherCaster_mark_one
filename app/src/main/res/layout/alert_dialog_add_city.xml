@@ -27,6 +27,7 @@
             android:layout_marginRight="-2dp"
             android:layout_marginBottom="1dp"
             android:inputType="text"
+            android:digits="abcdefghijklmnopqrstuvwxyz -ABCDEFGHIJKLMNOPQRSTUVWXYZ" />
 
     </RelativeLayout>
 
