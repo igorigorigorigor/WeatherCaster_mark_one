@@ -189,9 +189,9 @@ public class CityListActivity extends BaseActivity {
     private class CityHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        private TextView nameTextView;
-        private ImageView iconImageView;
-        private TextView tempTextView;
+        private TextView mNameTextView;
+        private ImageView mIconImageView;
+        private TextView mTempTextView;
 
         private City mCity;
 
@@ -199,16 +199,16 @@ public class CityListActivity extends BaseActivity {
             super(itemView);
             itemView.setOnClickListener(this);
 
-            nameTextView = (TextView) itemView.findViewById(R.id.city_list_item_nameTextView);
-            iconImageView= (ImageView) itemView.findViewById(R.id.city_list_item_iconImageView);
-            tempTextView = (TextView) itemView.findViewById(R.id.city_list_item_tempTextView);
+            mNameTextView = (TextView) itemView.findViewById(R.id.city_list_item_nameTextView);
+            mIconImageView = (ImageView) itemView.findViewById(R.id.city_list_item_iconImageView);
+            mTempTextView = (TextView) itemView.findViewById(R.id.city_list_item_tempTextView);
         }
 
         public void bindCity(City city) {
             mCity = city;
-            nameTextView.setText(city.getName() + ", " + city.getCountry());
-            iconImageView.setImageBitmap(city.getIconBitmap());
-            tempTextView.setText(city.getTemp());
+            mNameTextView.setText(city.getName() + ", " + city.getCountry());
+            mIconImageView.setImageBitmap(city.getIconBitmap());
+            mTempTextView.setText(city.getTemp());
         }
 
         @Override
