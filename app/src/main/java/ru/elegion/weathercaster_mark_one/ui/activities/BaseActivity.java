@@ -136,17 +136,17 @@ abstract public class BaseActivity extends AppCompatActivity {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         StringBuilder responseBuilder = new StringBuilder();
         if (urlConnection.getResponseCode() == 200) {
+            Log.d(LOG_TAG, "getWeatherDataFromApi: started gracefully");
             InputStreamReader inputStreamReader = new InputStreamReader(urlConnection.getInputStream());
             BufferedReader r = new BufferedReader(inputStreamReader);
-
             String line = null;
             while ((line = r.readLine()) != null) {
                 responseBuilder.append(line).append("\n");
+                Log.d(LOG_TAG, line);
             }
             close(r);
             urlConnection.disconnect();
-            // Background work finished successfully
-            Log.i(LOG_TAG, "getWeatherDataFromApi: done successfully");
+            Log.d(LOG_TAG, "getWeatherDataFromApi: done successfully");
         } else if (urlConnection.getResponseCode() == 429) {
             // Too many requests
             Log.i(LOG_TAG, "getWeatherDataFromApi: too many requests");
@@ -173,7 +173,7 @@ abstract public class BaseActivity extends AppCompatActivity {
                 }
                 return updatedCities;
             } else {
-                Log.e(LOG_TAG, "ResponseBody JSONArray size is not equal to cities list size");
+                Log.i(LOG_TAG, "ResponseBody JSONArray size is not equal to cities list size");
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "JSONException Data: " + responseBody);
