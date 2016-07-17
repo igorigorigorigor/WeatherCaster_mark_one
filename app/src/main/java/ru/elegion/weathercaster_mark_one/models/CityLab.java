@@ -41,7 +41,6 @@ public class CityLab {
             mDBHelper = new DBHelper(mAppContext);
         }
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        Log.d(LOG_TAG, "--- Update cities: ---");
         ContentValues cv = new ContentValues();
         for (City city : mCities) {
             cv.put("id", city.getId());
@@ -50,7 +49,6 @@ public class CityLab {
             cv.put("icon", city.getIcon());
             cv.put("temp", city.getTemp());
             int updCount = db.update("cities", cv, "id = ?", new String[]{city.getId()});
-            Log.d(LOG_TAG, "updated rows count = " + updCount);
         }
         mDBHelper.close();
     }
@@ -64,14 +62,12 @@ public class CityLab {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        Log.d(LOG_TAG, "--- Insert in cities: ---");
         cv.put("id", city.getId());
         cv.put("name", city.getName());
         cv.put("country", city.getCountry());
         cv.put("icon", city.getIcon());
         cv.put("temp", city.getTemp());
         long rowID = db.insert("cities", null, cv);
-        Log.d(LOG_TAG, "row inserted, ID = " + rowID);
 
         mDBHelper.close();
     }
@@ -86,7 +82,6 @@ public class CityLab {
         
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         long rowID = db.delete("cities", "id = ?", new String[]{removedCityID});
-        Log.d(LOG_TAG, "row deleted, ID = " + rowID);
 
         mDBHelper.close();
     }
@@ -174,10 +169,8 @@ public class CityLab {
 
             for (int i = 0; i < mInitialCityIDs.length; i++){
                 ContentValues cv = new ContentValues();
-                Log.d(LOG_TAG, "--- Insert in cities: ---");
                 cv.put("id", mInitialCityIDs[i]);
                 long rowID = db.insert("cities", null, cv);
-                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
             }
         }
     }
