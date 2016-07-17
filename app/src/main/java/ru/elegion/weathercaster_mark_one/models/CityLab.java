@@ -5,9 +5,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Freeman on 07.07.2016.
@@ -19,6 +28,7 @@ public class CityLab {
     private DBHelper mDBHelper;
     private ArrayList<City> mCities;
     private static CityLab sCityLab;
+    private static final String sFilename = "citylist.json";
 
     public static String getCityIdTag() {
         return CITY_ID_TAG;
@@ -173,5 +183,40 @@ public class CityLab {
                 long rowID = db.insert("cities", null, cv);
             }
         }
+    }
+
+    @Nullable
+    public ArrayList<String> getAllCitiesNames(){
+        ArrayList<String> allCitiesNames = new ArrayList<>();
+        try {
+            ArrayList<String> allCities = getAllCities();
+            for (String line : allCities){
+                JSONObject city = new JSONObject(line);
+                allCitiesNames.add(city.getString("name"));
+            }
+        } catch (JSONException | IOException e) {
+            Log.e(LOG_TAG, e.getMessage());
+        }
+        return allCitiesNames;
+    }
+
+
+    @Nullable
+    private ArrayList<String> getAllCities() throws IOException, JSONException {
+        BufferedReader reader = null;
+        String line = null;
+        ArrayList<String> cities = new ArrayList<>();
+        try {
+            InputStream in = mAppContext.getAssets().open(sFilename);
+            reader = new BufferedReader(new InputStreamReader(in));
+            while ((line = reader.readLine()) != null) {
+                cities.add(line);
+            }
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+        return cities;
     }
 }

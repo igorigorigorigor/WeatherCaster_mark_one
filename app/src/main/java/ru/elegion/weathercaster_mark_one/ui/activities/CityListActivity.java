@@ -1,11 +1,12 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -16,19 +17,25 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
+import ru.elegion.weathercaster_mark_one.R;
 import ru.elegion.weathercaster_mark_one.models.City;
 import ru.elegion.weathercaster_mark_one.models.CityLab;
-import ru.elegion.weathercaster_mark_one.R;
+
 
 public class CityListActivity extends BaseActivity {
     private CityAdapter mAdapter;
@@ -107,10 +114,22 @@ public class CityListActivity extends BaseActivity {
          });
     }
 
+
+
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(CityListActivity.this);
         final View dialogView = this.getLayoutInflater().inflate(R.layout.alert_dialog_add_city, null);
-        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_input);
+        final AutoCompleteTextView input = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_input);
+        input.setThreshold(3);
+        ArrayList<String> allCitiesNames = mCityLab.getAllCitiesNames();
+        input.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, allCitiesNames));
+        input.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String cityName = (String) adapterView.getItemAtPosition(position);
+                input.setText(cityName);
+            }
+        });
 
         builder
                 .setTitle("Add city")
@@ -132,6 +151,7 @@ public class CityListActivity extends BaseActivity {
                                 addCityTask.execute(newCities);
                                 ;}
                         });
+
 
         AlertDialog alert = builder.create();
         alert.show();
@@ -260,7 +280,7 @@ public class CityListActivity extends BaseActivity {
 
     private void showProgressDialog() {
         mProgressDialog = new ProgressDialog(CityListActivity.this);
-        if(!mSwipeRefreshLayout.isShown()) {
+        if (!mSwipeRefreshLayout.isShown()) {
             mProgressDialog.setMessage(getString(R.string.downloading_data));
             mProgressDialog.setCanceledOnTouchOutside(false);
             mProgressDialog.show();
