@@ -8,10 +8,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -187,36 +193,22 @@ public class CityLab {
 
     @Nullable
     public ArrayList<String> getAllCitiesNames(){
+
         ArrayList<String> allCitiesNames = new ArrayList<>();
         try {
-            ArrayList<String> allCities = getAllCities();
-            for (String line : allCities){
-                JSONObject city = new JSONObject(line);
-                allCitiesNames.add(city.getString("name"));
+            JsonFactory jfactory = new JsonFactory();
+            JsonParser jParser = jfactory.createParser(mAppContext.getAssets().open(sFilename));
+
+            while (jParser.nextToken() != JsonToken.END_ARRAY) {
+                if (jParser.getCurrentName() != null && jParser.getCurrentName().equalsIgnoreCase("name")){
+                    jParser.nextToken();
+                    allCitiesNames.add(jParser.getText());
+                }
             }
-        } catch (JSONException | IOException e) {
+            jParser.close();
+        } catch (IOException e) {
             Log.e(LOG_TAG, e.getMessage());
         }
         return allCitiesNames;
-    }
-
-
-    @Nullable
-    private ArrayList<String> getAllCities() throws IOException, JSONException {
-        BufferedReader reader = null;
-        String line = null;
-        ArrayList<String> cities = new ArrayList<>();
-        try {
-            InputStream in = mAppContext.getAssets().open(sFilename);
-            reader = new BufferedReader(new InputStreamReader(in));
-            while ((line = reader.readLine()) != null) {
-                cities.add(line);
-            }
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-        return cities;
     }
 }

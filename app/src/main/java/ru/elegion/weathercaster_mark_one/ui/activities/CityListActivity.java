@@ -43,10 +43,12 @@ public class CityListActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
     private ProgressDialog mProgressDialog;
     private LinearLayoutManager mLayoutManager;
+    private ArrayList<String> mAllCitiesNames;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         setTitle(R.string.cities_title);
         setContentView(R.layout.activity_city_list);
@@ -83,7 +85,6 @@ public class CityListActivity extends BaseActivity {
         mAdapter = new CityAdapter(mCityLab.getCities());
         mRecyclerView.setAdapter(mAdapter);
 
-
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
             @Override
@@ -112,6 +113,13 @@ public class CityListActivity extends BaseActivity {
                 }
             };
          });
+
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                mAllCitiesNames = mCityLab.getAllCitiesNames();
+            }
+        });
+        t.start();
     }
 
 
@@ -121,8 +129,7 @@ public class CityListActivity extends BaseActivity {
         final View dialogView = this.getLayoutInflater().inflate(R.layout.alert_dialog_add_city, null);
         final AutoCompleteTextView input = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_input);
         input.setThreshold(3);
-        ArrayList<String> allCitiesNames = mCityLab.getAllCitiesNames();
-        input.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, allCitiesNames));
+        input.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, mAllCitiesNames));
         input.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
