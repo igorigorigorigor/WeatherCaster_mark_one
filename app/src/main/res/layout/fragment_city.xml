@@ -1,25 +1,50 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="ru.elegion.weathercaster_mark_one.ui.activities.CityFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="250dp">
+
         <ImageView
-            android:layout_centerHorizontal="true"
             android:id="@+id/iconImageView"
-            android:minHeight="?android:attr/listPreferredItemHeightSmall"
-            android:layout_height="48dp"
-            android:layout_width="48dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/ic_media_play"
+            tools:ignore="ContentDescription"/>
         <TextView
-            android:layout_gravity=""
-            android:id="@+id/tvLabel"
+            android:id="@+id/tvCityName"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/iconImageView"
-            android:textSize="25sp"/>
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="24sp"
+            tools:text="defaultCity" />
     </RelativeLayout>
-</FrameLayout>
+    <RelativeLayout
+        android:id="@+id/list_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <TextView
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:id="@+id/text_melody"
+            android:layout_width="fill_parent"
+            android:layout_height="42dp"
+            android:background="#ffffff"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:textColor="#000000"
+            android:textSize="13sp"
+            android:text="some description"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
+    </RelativeLayout>
+
+</LinearLayout>

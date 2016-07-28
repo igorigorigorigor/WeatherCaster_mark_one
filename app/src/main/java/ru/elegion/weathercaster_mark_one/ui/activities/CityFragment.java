@@ -1,7 +1,5 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.UUID;
 
 import ru.elegion.weathercaster_mark_one.R;
 import ru.elegion.weathercaster_mark_one.models.City;
@@ -49,7 +45,7 @@ public class CityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_city, container, false);
-        TextView tvLabel = (TextView) view.findViewById(R.id.tvLabel);
+        TextView tvLabel = (TextView) view.findViewById(R.id.tvCityName);
         tvLabel.setText(mCity.getName() + ", " + mCity.getCountry() + " --- " + mCity.getTemp());
         ImageView iconImageView = (ImageView) view.findViewById(R.id.iconImageView);
         iconImageView.setImageBitmap(mCity.getIconBitmap());
