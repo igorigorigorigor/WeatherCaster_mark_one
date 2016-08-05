@@ -240,8 +240,8 @@ public class CityListActivity extends BaseActivity {
         public void bindCity(City city) {
             mCity = city;
             mNameTextView.setText(city.getName() + ", " + city.getCountry());
-            mIconImageView.setImageBitmap(city.getIconBitmap());
-            mTempTextView.setText(city.getTemp());
+            mIconImageView.setImageBitmap(city.getWeatherInfo().getIconBitmap());
+            mTempTextView.setText(city.getWeatherInfo().getTemperature());
         }
 
         @Override

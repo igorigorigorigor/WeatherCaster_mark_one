@@ -76,7 +76,7 @@ abstract public class BaseActivity extends AppCompatActivity {
                     String responseBody = getWeatherDataFromApi(cities);
                     cities = parseListResponseAndUpdateCities(cities, responseBody);
                     for (City city:cities){
-                        city.setIconBitmap(getIconFromApi(city));
+                        city.getWeatherInfo().setIconBitmap(getIconFromApi(city));
                     }
                     mCityLab.updateCitiesInDB(cities);
                 } catch (Exception e) {
@@ -98,7 +98,7 @@ abstract public class BaseActivity extends AppCompatActivity {
                 try {
                     String responseBody = getWeatherDataFromApi(cities);
                     City newCity = parseResponseAndUpdateCity(cities.get(0), responseBody);
-                    newCity.setIconBitmap(getIconFromApi(newCity));
+                    newCity.getWeatherInfo().setIconBitmap(getIconFromApi(newCity));
                     mCityLab.addCityToDB(newCity);
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "GenericAddCityTask Exception");
@@ -113,7 +113,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     @Nullable
     private Bitmap getIconFromApi(City city) throws IOException {
-        URL url = iconRequestURL(city.getIcon());
+        URL url = iconRequestURL(city.getWeatherInfo().getIcon());
 
         if (url == null) { return null;  }
 
@@ -186,9 +186,8 @@ abstract public class BaseActivity extends AppCompatActivity {
         city.setId(cityJsonObject.getString("id"));
         city.setName(cityJsonObject.getString("name"));
         city.setCountry(cityJsonObject.getJSONObject("sys").getString("country"));
-        city.setIcon(cityJsonObject.getJSONArray("weather").getJSONObject(0).getString("icon"));
-        String temp = String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp")));
-        city.setTemp(temp + " \u2103");
+        city.getWeatherInfo().setIcon(cityJsonObject.getJSONArray("weather").getJSONObject(0).getString("icon"));
+        city.getWeatherInfo().setTemperature(String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp"))));
         return city;
     }
 

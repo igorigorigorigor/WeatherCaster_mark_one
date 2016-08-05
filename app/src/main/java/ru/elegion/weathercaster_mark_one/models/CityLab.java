@@ -12,17 +12,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Freeman on 07.07.2016.
@@ -62,8 +53,8 @@ public class CityLab {
             cv.put("id", city.getId());
             cv.put("name", city.getName());
             cv.put("country", city.getCountry());
-            cv.put("icon", city.getIcon());
-            cv.put("temp", city.getTemp());
+            cv.put("icon", city.getWeatherInfo().getIcon());
+            cv.put("temp", city.getWeatherInfo().getTemperature());
             int updCount = db.update("cities", cv, "id = ?", new String[]{city.getId()});
         }
         mDBHelper.close();
@@ -81,8 +72,8 @@ public class CityLab {
         cv.put("id", city.getId());
         cv.put("name", city.getName());
         cv.put("country", city.getCountry());
-        cv.put("icon", city.getIcon());
-        cv.put("temp", city.getTemp());
+        cv.put("icon", city.getWeatherInfo().getIcon());
+        cv.put("temp", city.getWeatherInfo().getTemperature());
         long rowID = db.insert("cities", null, cv);
 
         mDBHelper.close();
@@ -128,8 +119,8 @@ public class CityLab {
                 city.setId(c.getString(idColIndex));
                 city.setName(c.getString(nameColIndex));
                 city.setCountry(c.getString(countryColIndex));
-                city.setIcon(c.getString(iconColIndex));
-                city.setTemp(c.getString(tempColIndex));
+                city.getWeatherInfo().setIcon(c.getString(iconColIndex));
+                city.getWeatherInfo().setTemperature(c.getString(tempColIndex));
                 mCities.add(city);
             } while (c.moveToNext());
         } else

@@ -46,9 +46,9 @@ public class CityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_city, container, false);
         TextView tvLabel = (TextView) view.findViewById(R.id.tvCityName);
-        tvLabel.setText(mCity.getName() + ", " + mCity.getCountry() + " --- " + mCity.getTemp());
+        tvLabel.setText(mCity.getName() + ", " + mCity.getCountry() + " --- " + mCity.getWeatherInfo().getTemperature());
         ImageView iconImageView = (ImageView) view.findViewById(R.id.iconImageView);
-        iconImageView.setImageBitmap(mCity.getIconBitmap());
+        iconImageView.setImageBitmap(mCity.getWeatherInfo().getIconBitmap());
         return view;
     }
 }
