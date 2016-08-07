@@ -16,4 +16,8 @@
     <string name="country_code_hint">country code (e.g. ru)</string>
     <string name="API_IMAGES_URL">http://openweathermap.org/img/w/</string>
     <string name="city_details_title">Weather details</string>
+    <string name="wind_speed_units">meter/sec</string>
+    <string name="pressure_units">kPa</string>
+    <string name="humidity_units">%</string>
+    <string name="temperature_units">℃</string>
 </resources>

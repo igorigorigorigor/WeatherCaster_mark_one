@@ -188,6 +188,10 @@ abstract public class BaseActivity extends AppCompatActivity {
         city.setCountry(cityJsonObject.getJSONObject("sys").getString("country"));
         city.getWeatherInfo().setIcon(cityJsonObject.getJSONArray("weather").getJSONObject(0).getString("icon"));
         city.getWeatherInfo().setTemperature(String.valueOf(Math.round(cityJsonObject.getJSONObject("main").getDouble("temp"))));
+        city.getWeatherInfo().setDescription(cityJsonObject.getJSONArray("weather").getJSONObject(0).getString("description"));
+        city.getWeatherInfo().setHumidity(cityJsonObject.getJSONObject("main").getString("humidity"));
+        city.getWeatherInfo().setPressure(cityJsonObject.getJSONObject("main").getString("pressure"));
+        city.getWeatherInfo().setWindSpeed(cityJsonObject.getJSONObject("wind").getString("speed"));
         return city;
     }
 

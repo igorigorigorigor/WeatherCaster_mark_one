@@ -17,6 +17,13 @@ import ru.elegion.weathercaster_mark_one.models.CityLab;
 public class CityFragment extends Fragment {
 
     private City mCity;
+    private TextView tvCityName;
+    private ImageView ivIcon;
+    private TextView tvWeatherDescription;
+    private TextView tvTemperature;
+    private TextView tvHumidity;
+    private TextView tvPressure;
+    private TextView tvWindSpeed;
 
     public City getCity() { return mCity; }
     public void setCity(City city) { mCity = city; }
@@ -45,10 +52,21 @@ public class CityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_city, container, false);
-        TextView tvLabel = (TextView) view.findViewById(R.id.tvCityName);
-        tvLabel.setText(mCity.getName() + ", " + mCity.getCountry() + " --- " + mCity.getWeatherInfo().getTemperature());
-        ImageView iconImageView = (ImageView) view.findViewById(R.id.iconImageView);
-        iconImageView.setImageBitmap(mCity.getWeatherInfo().getIconBitmap());
+        tvCityName = (TextView) view.findViewById(R.id.tvCityName);
+        ivIcon = (ImageView) view.findViewById(R.id.ivIcon);
+        tvWeatherDescription = (TextView) view.findViewById(R.id.tvWeatherDescription);
+        tvTemperature = (TextView) view.findViewById(R.id.tvTemperature);
+        tvHumidity = (TextView) view.findViewById(R.id.tvHumidity);
+        tvPressure = (TextView) view.findViewById(R.id.tvPressure);
+        tvWindSpeed = (TextView) view.findViewById(R.id.tvWindSpeed);
+
+        tvCityName.setText(mCity.getName() + ", " + mCity.getCountry());
+        ivIcon.setImageBitmap(mCity.getWeatherInfo().getIconBitmap());
+        tvWeatherDescription.setText(mCity.getWeatherInfo().getDescription());
+        tvTemperature.setText(mCity.getWeatherInfo().getTemperature() + getString(R.string.temperature_units));
+        tvHumidity.setText(mCity.getWeatherInfo().getHumidity() + getString(R.string.humidity_units));
+        tvPressure.setText(mCity.getWeatherInfo().getPressure() + " " + getString(R.string.pressure_units));
+        tvWindSpeed.setText(mCity.getWeatherInfo().getWindSpeed() + " " + getString(R.string.wind_speed_units));
         return view;
     }
 }

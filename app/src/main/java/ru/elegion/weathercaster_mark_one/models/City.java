@@ -2,6 +2,8 @@ package ru.elegion.weathercaster_mark_one.models;
 
 import android.graphics.Bitmap;
 
+import ru.elegion.weathercaster_mark_one.R;
+
 /**
  * Created by Freeman on 07.07.2016.
  */
@@ -26,8 +28,6 @@ public class City {
     public String getCountry() { return mCountry; }
     public void setCountry(String country) { mCountry = country; }
 
-
-
     public Weather getWeatherInfo() {
         if (mWeatherInfo == null) {
             mWeatherInfo = new Weather();
@@ -44,19 +44,14 @@ public class City {
         private String mPressure;
         private String mWindSpeed;
 
-
         public String getWindSpeed() {
             return mWindSpeed;
         }
-
-        public void setWindSpeed(String windSpeed) {
-            this.mWindSpeed = windSpeed;
-        }
+        public void setWindSpeed(String windSpeed) { this.mWindSpeed = windSpeed; }
 
         public String getDescription() {
             return mDescription;
         }
-
         public void setDescription(String description) {
             this.mDescription = description;
         }
@@ -64,23 +59,16 @@ public class City {
         public String getTemperature() {
             return mTemperature;
         }
-
-        public void setTemperature(String temperature) {
-            this.mTemperature = temperature + " \u2103";
-        }
+        public void setTemperature(String temperature) {  this.mTemperature = temperature; }
 
         public String getHumidity() {
             return mHumidity;
         }
-
         public void setHumidity(String humidity) {
             this.mHumidity = humidity;
         }
 
-        public String getPressure() {
-            return mPressure;
-        }
-
+        public String getPressure() { return mPressure; }
         public void setPressure(String pressure) {
             this.mPressure = pressure;
         }
@@ -90,5 +78,6 @@ public class City {
 
         public Bitmap getIconBitmap() { return mIconBitmap; }
         public void setIconBitmap(Bitmap iconBitmap) { mIconBitmap = iconBitmap; }
+
     }
 }
