@@ -63,8 +63,8 @@ public class CityFragment extends Fragment {
         tvCityName.setText(mCity.getName() + ", " + mCity.getCountry());
         ivIcon.setImageBitmap(mCity.getWeatherInfo().getIconBitmap());
         tvWeatherDescription.setText(mCity.getWeatherInfo().getDescription());
-        tvTemperature.setText(mCity.getWeatherInfo().getTemperature() + getString(R.string.temperature_units));
-        tvHumidity.setText(mCity.getWeatherInfo().getHumidity() + getString(R.string.humidity_units));
+        tvTemperature.setText(mCity.getWeatherInfo().getTemperature() + " " + getString(R.string.temperature_units));
+        tvHumidity.setText(mCity.getWeatherInfo().getHumidity() + " " + getString(R.string.humidity_units));
         tvPressure.setText(mCity.getWeatherInfo().getPressure() + " " + getString(R.string.pressure_units));
         tvWindSpeed.setText(mCity.getWeatherInfo().getWindSpeed() + " " + getString(R.string.wind_speed_units));
         return view;
