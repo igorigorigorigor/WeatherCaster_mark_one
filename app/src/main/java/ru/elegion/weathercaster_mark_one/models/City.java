@@ -1,6 +1,9 @@
 package ru.elegion.weathercaster_mark_one.models;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import java.io.ByteArrayOutputStream;
 
 import ru.elegion.weathercaster_mark_one.R;
 
@@ -79,5 +82,17 @@ public class City {
         public Bitmap getIconBitmap() { return mIconBitmap; }
         public void setIconBitmap(Bitmap iconBitmap) { mIconBitmap = iconBitmap; }
 
+        public byte[] getByteArrayFromIconBitmap(){
+            Bitmap bmp = this.mIconBitmap;
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            return  stream.toByteArray();
+        }
+
+        public void setIconBitmapFromByteArray(byte [] image){
+            if (image != null && image.length > 0){
+                this.mIconBitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+            }
+        }
     }
 }

@@ -33,6 +33,7 @@ public class CityLab {
     private static final String HUMIDITY_COLUMN_NAME = "humidity";
     private static final String PRESSURE_COLUMN_NAME = "pressure";
     private static final String WINDSPEED_COLUMN_NAME = "windspeed";
+    private static final String ICON_BITMAP_COLUMN_NAME = "icon_bitmap";
     private final Context mAppContext;
     private DBHelper mDBHelper;
     private ArrayList<City> mCities;
@@ -90,6 +91,7 @@ public class CityLab {
         cv.put(NAME_COLUMN_NAME, city.getName());
         cv.put(COUNTRY_COLUMN_NAME, city.getCountry());
         cv.put(ICON_COLUMN_NAME, city.getWeatherInfo().getIcon());
+        cv.put(ICON_BITMAP_COLUMN_NAME, city.getWeatherInfo().getByteArrayFromIconBitmap());
         cv.put(TEMP_COLUMN_NAME, city.getWeatherInfo().getTemperature());
         cv.put(DESCRIPTION_COLUMN_NAME, city.getWeatherInfo().getDescription());
         cv.put(HUMIDITY_COLUMN_NAME, city.getWeatherInfo().getHumidity());
@@ -125,6 +127,7 @@ public class CityLab {
             int nameColIndex = c.getColumnIndex(NAME_COLUMN_NAME);
             int countryColIndex = c.getColumnIndex(COUNTRY_COLUMN_NAME);
             int iconColIndex = c.getColumnIndex(ICON_COLUMN_NAME);
+            int iconBitmapColIndex = c.getColumnIndex(ICON_BITMAP_COLUMN_NAME);
             int tempColIndex = c.getColumnIndex(TEMP_COLUMN_NAME);
             int descriptionColIndex = c.getColumnIndex(DESCRIPTION_COLUMN_NAME);
             int humidityColIndex = c.getColumnIndex(HUMIDITY_COLUMN_NAME);
@@ -147,6 +150,7 @@ public class CityLab {
                 city.setName(c.getString(nameColIndex));
                 city.setCountry(c.getString(countryColIndex));
                 city.getWeatherInfo().setIcon(c.getString(iconColIndex));
+                city.getWeatherInfo().setIconBitmapFromByteArray(c.getBlob(iconBitmapColIndex));
                 city.getWeatherInfo().setTemperature(c.getString(tempColIndex));
                 city.getWeatherInfo().setDescription(c.getString(descriptionColIndex));
                 city.getWeatherInfo().setHumidity(c.getString(humidityColIndex));
@@ -204,6 +208,7 @@ public class CityLab {
                     .append(NAME_COLUMN_NAME).append(" text, ")
                     .append(COUNTRY_COLUMN_NAME).append(" text, ")
                     .append(ICON_COLUMN_NAME).append(" text, ")
+                    .append(ICON_BITMAP_COLUMN_NAME).append(" blob, ")
                     .append(TEMP_COLUMN_NAME).append(" text, ")
                     .append(DESCRIPTION_COLUMN_NAME).append(" text, ")
                     .append(HUMIDITY_COLUMN_NAME).append(" text, ")
