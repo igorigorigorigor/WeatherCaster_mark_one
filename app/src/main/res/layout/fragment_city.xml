@@ -19,11 +19,10 @@
             tools:ignore="ContentDescription"/>
         <TextView
             android:id="@+id/tvCityName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="32dp"
-            android:gravity="center"
+            android:gravity="center_vertical|center_horizontal"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:textSize="24sp"
             tools:text="defaultCity" />
     </RelativeLayout>
@@ -33,43 +32,23 @@
         android:layout_height="0dp"
         android:layout_weight="1">
         <TextView
-            android:visibility="gone"
             tools:visibility="visible"
-            android:id="@+id/txtSomeDescription"
+            android:id="@+id/tvWeatherDescription"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:background="#ffffff"
-            android:gravity="center_vertical"
-            android:paddingLeft="16dp"
-            android:textColor="#000000"
-            android:textSize="13sp"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="18sp"
             android:text="some description"
             tools:ignore="RtlHardcoded,RtlSymmetry" />
         <LinearLayout
             android:id="@+id/tablelayout"
-            android:layout_below="@id/txtSomeDescription"
+            android:layout_below="@id/tvWeatherDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
             android:orientation="vertical">
-            <FrameLayout
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:layout_marginBottom="10dp">
-                <TextView
-                    android:text="Description"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"/>
-                <TextView
-                    android:id="@+id/tvWeatherDescription"
-                    android:text="empty"
-                    android:layout_gravity="right"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content" />
-            </FrameLayout>
             <FrameLayout
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
