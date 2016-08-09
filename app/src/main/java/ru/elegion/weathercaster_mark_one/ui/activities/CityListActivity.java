@@ -112,6 +112,16 @@ public class CityListActivity extends BaseActivity {
             };
          });
 
+        if (mTwoPane && mCityLab.getCities().size() > 0 ) {
+            Bundle arguments = new Bundle();
+            arguments.putString(CityLab.getCityIdTag(), mCityLab.getCity(0).getId());
+            CityFragment fragment = CityFragment.newInstance(mCityLab.getCity(0).getId());
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .commit();
+        }
+
         Thread t = new Thread(new Runnable() {
             public void run() {
                 mAllCitiesNames = mCityLab.getAllCitiesNames();
