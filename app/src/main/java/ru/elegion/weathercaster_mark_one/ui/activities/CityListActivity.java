@@ -1,7 +1,6 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,10 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,15 +40,14 @@ public class CityListActivity extends BaseActivity {
     private ProgressDialog mProgressDialog;
     private LinearLayoutManager mLayoutManager;
     private ArrayList<String> mAllCitiesNames;
+    private boolean mTwoPane;
+    private ItemTouchHelper mItemTouchHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setTitle(R.string.cities_title);
-        setContentView(R.layout.activity_city_list);
-
         if (getBooleanPreference("IS_FIRST_LAUNCH") && !isNetworkConnected()){
             setContentView(R.layout.activity_network_error);
             FrameLayout frmNetworkError = (FrameLayout) findViewById(R.id.flNetworkError);
@@ -64,28 +59,33 @@ public class CityListActivity extends BaseActivity {
                     recreate();
                 }
             });
+            setBooleanPreference("IS_FIRST_LAUNCH", false);
             return;
+        } else {
+            setContentView(R.layout.activity_city_list);
         };
+
+        if (findViewById(R.id.fragmentContainer) != null) {
+            mTwoPane = true;
+        }
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshList();
+                refreshCities();
             }
         });
 
-
         mCityLab = CityLab.build(getApplicationContext());
-        UpdateCitiesTask initiateCitiesTask = new UpdateCitiesTask();
-        initiateCitiesTask.execute(mCityLab.getCities());
+        refreshCities();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new CityAdapter(mCityLab.getCities());
         mRecyclerView.setAdapter(mAdapter);
 
-        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -99,8 +99,6 @@ public class CityListActivity extends BaseActivity {
             }
         });
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-
-        setBooleanPreference("IS_FIRST_LAUNCH", false);
 
         FloatingActionButton btnAddCity = (FloatingActionButton) findViewById(R.id.btnAddCity);
         btnAddCity.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +174,7 @@ public class CityListActivity extends BaseActivity {
         return true;
     }
 
-    private void refreshList() {
+    private void refreshCities() {
         final UpdateCitiesTask refreshCitiesTask = new UpdateCitiesTask();
         refreshCitiesTask.execute(mCityLab.getCities());
         mSwipeRefreshLayout.setRefreshing(false);
@@ -246,9 +244,20 @@ public class CityListActivity extends BaseActivity {
 
         @Override
         public void onClick(View v) {
-            Intent i = new Intent(getApplicationContext(), CityActivity.class);
-            i.putExtra(CityLab.getCityIdTag(), mCity.getId());
-            startActivity(i);
+            if (mTwoPane) {
+                Bundle arguments = new Bundle();
+                arguments.putString(CityLab.getCityIdTag(), mCity.getId());
+                CityFragment fragment = CityFragment.newInstance(mCity.getId());
+                fragment.setArguments(arguments);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, fragment)
+                        .commit();
+            } else {
+                Intent i = new Intent(getApplicationContext(), CityActivity.class);
+                i.putExtra(CityLab.getCityIdTag(), mCity.getId());
+                startActivity(i);
+            }
+
         }
     }
 

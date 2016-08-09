@@ -32,8 +32,6 @@
                 android:tint="@android:color/white"
                 android:src="@android:drawable/ic_input_add"/>
         </FrameLayout>
-
-
     </android.support.v4.widget.SwipeRefreshLayout>
     <FrameLayout
         android:layout_weight="1"

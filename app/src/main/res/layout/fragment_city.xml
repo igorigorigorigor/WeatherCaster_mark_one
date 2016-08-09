@@ -1,9 +1,11 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
-
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="20dp"
+    android:background="#f4f4f4">
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -114,7 +116,5 @@
                     android:layout_width="wrap_content" />
             </FrameLayout>
         </LinearLayout>
-
     </RelativeLayout>
-
 </LinearLayout>
