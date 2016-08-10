@@ -19,7 +19,7 @@ public class CityFragment extends Fragment {
 
     private City mCity;
     private TextView tvCityName;
-    private ImageView ivIcon;
+    private ImageView mIconImageView;
     private TextView tvWeatherDescription;
     private TextView tvTemperature;
     private TextView tvHumidity;
@@ -55,13 +55,14 @@ public class CityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_city, container, false);
         tvCityName = (TextView) view.findViewById(R.id.tvCityName);
-        ivIcon = (ImageView) view.findViewById(R.id.ivIcon);
+        mIconImageView = (ImageView) view.findViewById(R.id.ivIcon);
         tvWeatherDescription = (TextView) view.findViewById(R.id.tvWeatherDescription);
         tvTemperature = (TextView) view.findViewById(R.id.tvTemperature);
         tvHumidity = (TextView) view.findViewById(R.id.tvHumidity);
         tvPressure = (TextView) view.findViewById(R.id.tvPressure);
         tvWindSpeed = (TextView) view.findViewById(R.id.tvWindSpeed);
 
+        mIconImageView.setImageResource(getResources().getIdentifier(mCity.getWeatherInfo().getIcon(), "drawable", getActivity().getPackageName()));
         tvCityName.setText(mCity.getName() + ", " + mCity.getCountry());
         tvWeatherDescription.setText(mCity.getWeatherInfo().getDescription());
         tvTemperature.setText(mCity.getWeatherInfo().getTemperature() + " " + getString(R.string.temperature_units));
