@@ -1,12 +1,5 @@
 package ru.elegion.weathercaster_mark_one.models;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import java.io.ByteArrayOutputStream;
-
-import ru.elegion.weathercaster_mark_one.R;
-
 /**
  * Created by Freeman on 07.07.2016.
  */

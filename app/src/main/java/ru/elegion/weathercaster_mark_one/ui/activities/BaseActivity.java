@@ -2,8 +2,6 @@ package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -198,15 +196,6 @@ abstract public class BaseActivity extends AppCompatActivity {
         final String apiKey = getString(R.string.API_KEY);
         urlBuilder.append("&appid=").append(apiKey);
 
-        return new URL(urlBuilder.toString());
-    }
-
-    protected URL iconRequestURL(String param) throws MalformedURLException {
-        // http://openweathermap.org/img/w/10d.png
-
-        StringBuilder urlBuilder = new StringBuilder(getString(R.string.API_IMAGES_URL));
-        urlBuilder.append(param);
-        urlBuilder.append(".png");
         return new URL(urlBuilder.toString());
     }
 }
