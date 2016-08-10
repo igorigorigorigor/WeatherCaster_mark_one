@@ -249,8 +249,8 @@ public class CityListActivity extends BaseActivity {
         public void bindCity(City city) {
             mCity = city;
             mNameTextView.setText(city.getName() + ", " + city.getCountry());
-            mIconImageView.setImageBitmap(city.getWeatherInfo().getIconBitmap());
-            mTempTextView.setText(city.getWeatherInfo().getTemperature());
+            mIconImageView.setImageResource(getResources().getIdentifier(city.getWeatherInfo().getIcon(), "drawable", getPackageName()));
+            mTempTextView.setText(city.getWeatherInfo().getTemperature() + " " + getString(R.string.temperature_units));
         }
 
         @Override

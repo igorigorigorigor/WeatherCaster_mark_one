@@ -75,9 +75,6 @@ abstract public class BaseActivity extends AppCompatActivity {
                 try {
                     String responseBody = getWeatherDataFromApi(cities);
                     cities = parseListResponseAndUpdateCities(cities, responseBody);
-                    for (City city:cities){
-                        city.getWeatherInfo().setIconBitmap(getIconFromApi(city));
-                    }
                     mCityLab.updateCitiesInDB(cities);
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "GenericAddCityTask Exception");
@@ -98,7 +95,6 @@ abstract public class BaseActivity extends AppCompatActivity {
                 try {
                     String responseBody = getWeatherDataFromApi(cities);
                     City newCity = parseResponseAndUpdateCity(cities.get(0), responseBody);
-                    newCity.getWeatherInfo().setIconBitmap(getIconFromApi(newCity));
                     mCityLab.addCityToDB(newCity);
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "GenericAddCityTask Exception");
@@ -109,22 +105,6 @@ abstract public class BaseActivity extends AppCompatActivity {
             }
             return null;
         }
-    }
-
-    @Nullable
-    private Bitmap getIconFromApi(City city) throws IOException {
-        URL url = iconRequestURL(city.getWeatherInfo().getIcon());
-
-        if (url == null) { return null;  }
-
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        Bitmap icon = null;
-        if (urlConnection.getResponseCode() == 200) {
-            icon = BitmapFactory.decodeStream(urlConnection.getInputStream());
-            urlConnection.disconnect();
-        }
-        urlConnection.disconnect();
-        return icon;
     }
 
     @Nullable

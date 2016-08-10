@@ -41,7 +41,6 @@ public class City {
     public class Weather {
         private String mDescription;
         private String mIcon;
-        private Bitmap mIconBitmap;
         private String mTemperature;
         private String mHumidity;
         private String mPressure;
@@ -76,23 +75,7 @@ public class City {
             this.mPressure = pressure;
         }
 
-        public String getIcon() { return mIcon; }
+        public String getIcon() { return "w" + mIcon; }
         public void setIcon(String icon) { mIcon = icon; }
-
-        public Bitmap getIconBitmap() { return mIconBitmap; }
-        public void setIconBitmap(Bitmap iconBitmap) { mIconBitmap = iconBitmap; }
-
-        public byte[] getByteArrayFromIconBitmap(){
-            Bitmap bmp = this.mIconBitmap;
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            return  stream.toByteArray();
-        }
-
-        public void setIconBitmapFromByteArray(byte [] image){
-            if (image != null && image.length > 0){
-                this.mIconBitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-            }
-        }
     }
 }
