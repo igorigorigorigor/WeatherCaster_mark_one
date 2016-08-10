@@ -2,17 +2,14 @@ package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import java.util.UUID;
 
 import ru.elegion.weathercaster_mark_one.R;
 import ru.elegion.weathercaster_mark_one.models.City;
 import ru.elegion.weathercaster_mark_one.models.CityLab;
+import ru.elegion.weathercaster_mark_one.ui.fragments.CityFragment;
 
 public class CityActivity extends BaseActivity {
 

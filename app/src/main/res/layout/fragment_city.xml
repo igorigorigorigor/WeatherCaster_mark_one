@@ -16,8 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
-            android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_media_play"
+            android:scaleType="fitCenter"
+            android:src="@drawable/default_icon"
             tools:ignore="ContentDescription"/>
         <TextView
             android:id="@+id/tvCityName"

@@ -31,6 +31,7 @@ import java.util.List;
 import ru.elegion.weathercaster_mark_one.R;
 import ru.elegion.weathercaster_mark_one.models.City;
 import ru.elegion.weathercaster_mark_one.models.CityLab;
+import ru.elegion.weathercaster_mark_one.ui.fragments.CityFragment;
 
 
 public class CityListActivity extends BaseActivity {
