@@ -256,10 +256,7 @@ public class CityListActivity extends BaseActivity {
         @Override
         public void onClick(View v) {
             if (mTwoPane) {
-                Bundle arguments = new Bundle();
-                arguments.putString(CityLab.getCityIdTag(), mCity.getId());
                 CityFragment fragment = CityFragment.newInstance(mCity.getId());
-                fragment.setArguments(arguments);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainer, fragment)
                         .commit();

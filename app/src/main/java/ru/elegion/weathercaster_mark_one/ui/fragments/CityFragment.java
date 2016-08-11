@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,6 @@ import ru.elegion.weathercaster_mark_one.models.CityLab;
 public class CityFragment extends Fragment {
 
     private City mCity;
-    private TextView tvCityName;
     private ImageView mIconImageView;
     private TextView tvWeatherDescription;
     private TextView tvTemperature;
@@ -54,7 +54,9 @@ public class CityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_city, container, false);
-        tvCityName = (TextView) view.findViewById(R.id.tvCityName);
+
+        getActivity().setTitle(mCity.getName() + ", " + mCity.getCountry());
+
         mIconImageView = (ImageView) view.findViewById(R.id.ivIcon);
         tvWeatherDescription = (TextView) view.findViewById(R.id.tvWeatherDescription);
         tvTemperature = (TextView) view.findViewById(R.id.tvTemperature);
@@ -63,7 +65,6 @@ public class CityFragment extends Fragment {
         tvWindSpeed = (TextView) view.findViewById(R.id.tvWindSpeed);
 
         mIconImageView.setImageResource(getResources().getIdentifier(mCity.getWeatherInfo().getIcon(), "drawable", getActivity().getPackageName()));
-        tvCityName.setText(mCity.getName() + ", " + mCity.getCountry());
         tvWeatherDescription.setText(mCity.getWeatherInfo().getDescription());
         tvTemperature.setText(mCity.getWeatherInfo().getTemperature() + " " + getString(R.string.temperature_units));
         tvHumidity.setText(mCity.getWeatherInfo().getHumidity() + " " + getString(R.string.humidity_units));

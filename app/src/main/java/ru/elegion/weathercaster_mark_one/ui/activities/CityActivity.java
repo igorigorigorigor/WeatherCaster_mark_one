@@ -14,12 +14,14 @@ import ru.elegion.weathercaster_mark_one.ui.fragments.CityFragment;
 public class CityActivity extends BaseActivity {
 
     private ViewPager mViewPager;
+    private City mCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city);
         setTitle(R.string.city_details_title);
+
         mViewPager = new ViewPager(this);
         mViewPager.setId(R.id.vpPager);
         setContentView(mViewPager);
@@ -41,8 +43,8 @@ public class CityActivity extends BaseActivity {
         });
 
         String cityID = getIntent().getStringExtra(CityLab.getCityIdTag());
-        City currentCity = mCityLab.getCity(cityID);
-        int i = mCityLab.getCities().indexOf(currentCity);
+        mCity = mCityLab.getCity(cityID);
+        int i = mCityLab.getCities().indexOf(mCity);
         mViewPager.setCurrentItem(i);
     }
 }
