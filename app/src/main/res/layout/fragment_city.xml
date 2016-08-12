@@ -1,12 +1,15 @@
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/main_background"
-    android:layout_margin="20dp">
+    android:background="@color/main_background">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:orientation="vertical">
     <android.support.v7.widget.CardView
     android:layout_width="match_parent"
     android:layout_height="220dp"
@@ -21,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_gravity="start"
+            android:padding="10dp"
             android:layout_centerHorizontal="true"
             android:scaleType="fitCenter"
             android:src="@drawable/default_icon"
@@ -42,19 +46,16 @@
         card_view:cardBackgroundColor="@android:color/white"
         card_view:cardElevation="10dp"
         card_view:cardUseCompatPadding="true">
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/list_panel"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <LinearLayout
             android:id="@+id/tablelayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_margin="20dp"
             android:orientation="vertical">
             <FrameLayout
                 android:layout_height="wrap_content"
@@ -106,8 +107,7 @@
             </FrameLayout>
             <FrameLayout
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:layout_marginBottom="10dp">
+                android:layout_width="match_parent">
                 <TextView
                     android:text="Wind Speed"
                     android:layout_height="wrap_content"
@@ -121,6 +121,6 @@
                     android:layout_width="wrap_content" />
             </FrameLayout>
         </LinearLayout>
-    </RelativeLayout>
+    </FrameLayout>
     </android.support.v7.widget.CardView>
-</LinearLayout>
+</LinearLayout></FrameLayout>
