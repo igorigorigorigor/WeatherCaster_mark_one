@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="#e6e6e6"
               android:paddingLeft="8dp"
               android:paddingRight="8dp"
               android:paddingTop="20dp">
@@ -27,6 +26,4 @@
                 android:tint="@android:color/white"
                 android:src="@android:drawable/ic_input_add"/>
 </FrameLayout>
-
-
 </android.support.v4.widget.SwipeRefreshLayout>
