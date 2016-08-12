@@ -20,14 +20,10 @@ public class CityActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city);
-        setTitle(R.string.city_details_title);
 
-        mViewPager = new ViewPager(this);
-        mViewPager.setId(R.id.vpPager);
-        setContentView(mViewPager);
+        mViewPager = (ViewPager) findViewById(R.id.vpPager);
 
         mCityLab = CityLab.build(getApplicationContext());
-
         FragmentManager fm = getSupportFragmentManager();
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {
             @Override
@@ -46,5 +42,26 @@ public class CityActivity extends BaseActivity {
         mCity = mCityLab.getCity(cityID);
         int i = mCityLab.getCities().indexOf(mCity);
         mViewPager.setCurrentItem(i);
+
+        setTitle(mCity.getName() + ", " + mCity.getCountry());
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                City city = CityLab.build(getApplicationContext()).getCity(position);
+                getSupportActionBar().setTitle(city.getName() + ", " + city.getCountry());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
     }
 }
