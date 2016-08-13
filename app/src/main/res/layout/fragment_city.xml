@@ -12,7 +12,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="30dp"
-        android:layout_margin="2dp">
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -22,6 +22,7 @@
                 android:layout_height="220dp"
                 android:layout_weight="1"
                 android:layout_marginBottom="2dp"
+                android:layout_margin="2dp"
                 card_view:cardBackgroundColor="@android:color/white"
                 card_view:cardElevation="2dp"
                 card_view:cardUseCompatPadding="true">
@@ -53,6 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_margin="2dp"
                 card_view:cardBackgroundColor="@android:color/white"
                 card_view:cardElevation="2dp"
                 card_view:cardUseCompatPadding="true">
