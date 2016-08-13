@@ -3,8 +3,10 @@ package ru.elegion.weathercaster_mark_one.ui.activities;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import ru.elegion.weathercaster_mark_one.R;
 import ru.elegion.weathercaster_mark_one.models.City;
@@ -63,5 +65,17 @@ public class CityActivity extends BaseActivity {
             }
         });
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
