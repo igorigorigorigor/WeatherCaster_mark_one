@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -113,15 +114,7 @@ public class CityListActivity extends BaseActivity {
             };
          });
 
-        if (mTwoPane && mCityLab.getCities().size() > 0 ) {
-            Bundle arguments = new Bundle();
-            arguments.putString(CityLab.getCityIdTag(), mCityLab.getCity(0).getId());
-            CityFragment fragment = CityFragment.newInstance(mCityLab.getCity(0).getId());
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, fragment)
-                    .commit();
-        }
+
 
         Thread t = new Thread(new Runnable() {
             public void run() {
@@ -281,6 +274,17 @@ public class CityListActivity extends BaseActivity {
             super.onPostExecute(result);
             mAdapter.updateDataset();
             hideProgressDialog();
+
+            if (mTwoPane && mCityLab.getCities().size() > 0 ) {
+                FragmentManager fm = getSupportFragmentManager();
+                CityFragment fragment = (CityFragment) fm.findFragmentById(R.id.fragmentContainer);
+                if (fragment == null) {
+                    fragment = CityFragment.newInstance(mCityLab.getCity(0).getId());
+                    fm.beginTransaction()
+                            .replace(R.id.fragmentContainer, fragment)
+                            .commit();
+                }
+            }
         }
     }
 

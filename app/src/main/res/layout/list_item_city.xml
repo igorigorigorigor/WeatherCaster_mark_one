@@ -18,7 +18,6 @@
             android:layout_height="48dp"
             android:paddingLeft="15dp"
             android:id="@+id/city_list_item_iconImageView"
-            android:src="@drawable/w01d"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             />
