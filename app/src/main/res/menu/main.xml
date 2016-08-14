@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android2="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_autorenew_black_24dp"
+        android:actionLayout="@layout/refresh_button"
+        android2:showAsAction="always"
+        android:title="@string/menuitem_refresh"
+        android:paddingStart="12dip"
+        android:paddingEnd="12dip"/>
+</menu>

@@ -1,6 +1,7 @@
 package ru.elegion.weathercaster_mark_one.ui.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,8 +16,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -44,6 +48,7 @@ public class CityListActivity extends BaseActivity {
     private ArrayList<String> mAllCitiesNames;
     private boolean mTwoPane;
     private ItemTouchHelper mItemTouchHelper;
+    private Menu mOptionsMenu;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,8 +129,6 @@ public class CityListActivity extends BaseActivity {
         t.start();
     }
 
-
-
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(CityListActivity.this);
         final View dialogView = this.getLayoutInflater().inflate(R.layout.alert_dialog_add_city, null);
@@ -174,8 +177,36 @@ public class CityListActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main, menu);
+        mOptionsMenu = menu;
         return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                ImageView refreshItem = (ImageView)inflater.inflate(R.layout.refresh_button, null);
+                Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
+                rotation.setRepeatCount(Animation.INFINITE);
+                refreshItem.startAnimation(rotation);
+                item.setActionView(refreshItem);
+
+                refreshCities();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void resetUpdating()
+    {
+        MenuItem m = mOptionsMenu.findItem(R.id.action_refresh);
+        if(m.getActionView()!=null)
+        {
+            m.getActionView().clearAnimation();
+            m.setActionView(null);
+        }
     }
 
     private void refreshCities() {
@@ -274,7 +305,7 @@ public class CityListActivity extends BaseActivity {
             super.onPostExecute(result);
             mAdapter.updateDataset();
             hideProgressDialog();
-
+            resetUpdating();
             if (mTwoPane && mCityLab.getCities().size() > 0 ) {
                 FragmentManager fm = getSupportFragmentManager();
                 CityFragment fragment = (CityFragment) fm.findFragmentById(R.id.fragmentContainer);
@@ -285,6 +316,7 @@ public class CityListActivity extends BaseActivity {
                             .commit();
                 }
             }
+
         }
     }
 

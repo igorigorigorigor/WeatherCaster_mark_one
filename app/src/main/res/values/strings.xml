@@ -20,4 +20,5 @@
     <string name="pressure_units">kPa</string>
     <string name="humidity_units">%</string>
     <string name="temperature_units">℃</string>
+    <string name="menuitem_refresh">Refresh</string>
 </resources>
