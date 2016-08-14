@@ -68,7 +68,7 @@ public class City {
             this.mPressure = pressure;
         }
 
-        public String getIcon() { return "w" + mIcon; }
+        public String getIcon() { return mIcon; }
         public void setIcon(String icon) { mIcon = icon; }
     }
 }

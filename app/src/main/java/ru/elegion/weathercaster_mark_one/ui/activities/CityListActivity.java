@@ -32,13 +32,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import ru.elegion.weathercaster_mark_one.R;
 import ru.elegion.weathercaster_mark_one.models.City;
 import ru.elegion.weathercaster_mark_one.models.CityLab;
 import ru.elegion.weathercaster_mark_one.ui.fragments.CityFragment;
-import ru.elegion.weathercaster_mark_one.ui.utils.CityNameAdapter;
 
 
 public class CityListActivity extends BaseActivity {
@@ -57,6 +55,8 @@ public class CityListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setTitle(R.string.cities_title);
+        mCityLab = CityLab.build(getApplicationContext());
+
         if (getBooleanPreference("IS_FIRST_LAUNCH") && !isNetworkConnected()){
             setContentView(R.layout.activity_network_error);
             FrameLayout frmNetworkError = (FrameLayout) findViewById(R.id.flNetworkError);
@@ -68,11 +68,12 @@ public class CityListActivity extends BaseActivity {
                     recreate();
                 }
             });
-            setBooleanPreference("IS_FIRST_LAUNCH", false);
             return;
         } else {
             setContentView(R.layout.activity_city_list);
+            setBooleanPreference("IS_FIRST_LAUNCH", false);
         };
+
 
         if (findViewById(R.id.fragmentContainer) != null) {
             mTwoPane = true;
@@ -86,7 +87,6 @@ public class CityListActivity extends BaseActivity {
             }
         });
 
-        mCityLab = CityLab.build(getApplicationContext());
         refreshCities();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -179,8 +179,10 @@ public class CityListActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        mOptionsMenu = menu;
+        if (isNetworkConnected()) {
+            getMenuInflater().inflate(R.menu.main, menu);
+            mOptionsMenu = menu;
+        }
         return true;
     }
 
@@ -201,13 +203,14 @@ public class CityListActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void resetUpdating()
-    {
-        MenuItem m = mOptionsMenu.findItem(R.id.action_refresh);
-        if(m.getActionView()!=null)
-        {
-            m.getActionView().clearAnimation();
-            m.setActionView(null);
+    public void resetUpdating() {
+        if (mOptionsMenu != null) {
+            MenuItem m = mOptionsMenu.findItem(R.id.action_refresh);
+            if (m.getActionView() != null)
+            {
+                m.getActionView().clearAnimation();
+                m.setActionView(null);
+            }
         }
     }
 
@@ -245,6 +248,22 @@ public class CityListActivity extends BaseActivity {
         public void remove(int position) {
             mCityLab.remove(position);
             notifyItemRemoved(position);
+            if (mTwoPane) {
+                FragmentManager fm = getSupportFragmentManager();
+                CityFragment fragment = (CityFragment) fm.findFragmentById(R.id.fragmentContainer);
+                if (fragment != null) {
+                    if (mCityLab.getCities().size() == 0) {
+                        fm.beginTransaction()
+                                .remove(fragment)
+                                .commit();
+                    } else {
+                        fragment = CityFragment.newInstance(mCityLab.getCity(mCityLab.getCities().size() - 1).getId());
+                        fm.beginTransaction()
+                                .replace(R.id.fragmentContainer, fragment)
+                                .commit();
+                    }
+                }
+            }
         }
     }
 
@@ -269,8 +288,10 @@ public class CityListActivity extends BaseActivity {
         public void bindCity(City city) {
             mCity = city;
             mNameTextView.setText(city.getName() + ", " + city.getCountry());
-            mIconImageView.setImageResource(getResources().getIdentifier(city.getWeatherInfo().getIcon(), "drawable", getPackageName()));
             mTempTextView.setText(city.getWeatherInfo().getTemperature() + " " + getString(R.string.temperature_units));
+            if (city.getWeatherInfo().getIcon() != null){
+                mIconImageView.setImageResource(getResources().getIdentifier(city.getWeatherInfo().getIcon(), "drawable", getPackageName()));
+            }
         }
 
         @Override
@@ -308,7 +329,7 @@ public class CityListActivity extends BaseActivity {
                 if (fragment == null) {
                     fragment = CityFragment.newInstance(mCityLab.getCity(0).getId());
                     fm.beginTransaction()
-                            .replace(R.id.fragmentContainer, fragment)
+                            .add(R.id.fragmentContainer, fragment)
                             .commit();
                 }
             }
@@ -328,6 +349,21 @@ public class CityListActivity extends BaseActivity {
             super.onPostExecute(result);
             mAdapter.notifyDataSetChanged();
             hideProgressDialog();
+            if (mTwoPane && mCityLab.getCities().size() > 0 ) {
+                FragmentManager fm = getSupportFragmentManager();
+                CityFragment fragment = (CityFragment) fm.findFragmentById(R.id.fragmentContainer);
+                if (fragment == null) {
+                    fragment = CityFragment.newInstance(mCityLab.getCity(mCityLab.getCities().size() - 1).getId());
+                    fm.beginTransaction()
+                            .add(R.id.fragmentContainer, fragment)
+                            .commit();
+                } else {
+                    fragment = CityFragment.newInstance(mCityLab.getCity(mCityLab.getCities().size() - 1).getId());
+                    fm.beginTransaction()
+                            .replace(R.id.fragmentContainer, fragment)
+                            .commit();
+                }
+            }
         }
     }
 

@@ -45,7 +45,8 @@ public class CityActivity extends BaseActivity {
         int i = mCityLab.getCities().indexOf(mCity);
         mViewPager.setCurrentItem(i);
 
-        setTitle(mCity.getName() + ", " + mCity.getCountry());
+        getSupportActionBar().setTitle(mCity.getName() + ", " + mCity.getCountry());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
             @Override
@@ -64,8 +65,6 @@ public class CityActivity extends BaseActivity {
 
             }
         });
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
