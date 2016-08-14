@@ -189,31 +189,12 @@ public class CityListActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                ImageView refreshItem = (ImageView)inflater.inflate(R.layout.refresh_button, null);
-                Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
-                rotation.setRepeatCount(Animation.INFINITE);
-                refreshItem.startAnimation(rotation);
-                item.setActionView(refreshItem);
-
                 refreshCities();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
-    public void resetUpdating() {
-        if (mOptionsMenu != null) {
-            MenuItem m = mOptionsMenu.findItem(R.id.action_refresh);
-            if (m.getActionView() != null)
-            {
-                m.getActionView().clearAnimation();
-                m.setActionView(null);
-            }
-        }
-    }
-
+    
     private void refreshCities() {
         final UpdateCitiesTask refreshCitiesTask = new UpdateCitiesTask();
         refreshCitiesTask.execute(mCityLab.getCities());
@@ -322,7 +303,6 @@ public class CityListActivity extends BaseActivity {
             super.onPostExecute(result);
             mAdapter.notifyDataSetChanged();
             hideProgressDialog();
-            resetUpdating();
             if (mTwoPane && mCityLab.getCities().size() > 0 ) {
                 FragmentManager fm = getSupportFragmentManager();
                 CityFragment fragment = (CityFragment) fm.findFragmentById(R.id.fragmentContainer);
@@ -378,7 +358,7 @@ public class CityListActivity extends BaseActivity {
 
     private void showProgressDialog() {
         mProgressDialog = new ProgressDialog(CityListActivity.this);
-        if (!mSwipeRefreshLayout.isShown()) {
+        if (!mSwipeRefreshLayout.isRefreshing()) {
             mProgressDialog.setMessage(getString(R.string.downloading_data));
             mProgressDialog.setCanceledOnTouchOutside(false);
             mProgressDialog.show();
