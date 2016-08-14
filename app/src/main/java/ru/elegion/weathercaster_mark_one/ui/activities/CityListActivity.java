@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ import ru.elegion.weathercaster_mark_one.R;
 import ru.elegion.weathercaster_mark_one.models.City;
 import ru.elegion.weathercaster_mark_one.models.CityLab;
 import ru.elegion.weathercaster_mark_one.ui.fragments.CityFragment;
+import ru.elegion.weathercaster_mark_one.ui.utils.CityNameAdapter;
 
 
 public class CityListActivity extends BaseActivity {
@@ -89,7 +91,7 @@ public class CityListActivity extends BaseActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new CityAdapter(mCityLab.getCities());
+        mAdapter = new CityAdapter(getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
 
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -216,10 +218,10 @@ public class CityListActivity extends BaseActivity {
     }
 
     private class CityAdapter extends RecyclerView.Adapter<CityHolder> {
-        private List<City> mCities;
+        private CityLab mCityLab;
 
-        public CityAdapter(List<City> cities) {
-            mCities = cities;
+        public CityAdapter(Context context) {
+            mCityLab = CityLab.build(context);
         }
 
         @Override
@@ -231,24 +233,18 @@ public class CityListActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(CityHolder holder, int position) {
-            City city = mCities.get(position);
+            City city = mCityLab.getCity(position);
             holder.bindCity(city);
         }
 
         @Override
         public int getItemCount() {
-            return mCities.size();
+            return mCityLab.getCities().size();
         }
 
         public void remove(int position) {
             mCityLab.remove(position);
-            mCities = mCityLab.getCities();
             notifyItemRemoved(position);
-        }
-
-        public void updateDataset() {
-            mCities = mCityLab.getCities();
-            notifyDataSetChanged();
         }
     }
 
@@ -303,7 +299,7 @@ public class CityListActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            mAdapter.updateDataset();
+            mAdapter.notifyDataSetChanged();
             hideProgressDialog();
             resetUpdating();
             if (mTwoPane && mCityLab.getCities().size() > 0 ) {
@@ -330,7 +326,7 @@ public class CityListActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            mAdapter.updateDataset();
+            mAdapter.notifyDataSetChanged();
             hideProgressDialog();
         }
     }
