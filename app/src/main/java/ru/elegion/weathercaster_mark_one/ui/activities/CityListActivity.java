@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -136,12 +137,8 @@ public class CityListActivity extends BaseActivity {
         final View dialogView = this.getLayoutInflater().inflate(R.layout.alert_dialog_add_city, null);
         final AutoCompleteTextView input = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_input);
         input.setThreshold(3);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, mAllCitiesNames){
-            @Override
-            public int getCount() {
-                return 1;
-            }
-        };
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, mAllCitiesNames);
+
         input.setAdapter(adapter);
         input.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -174,6 +171,7 @@ public class CityListActivity extends BaseActivity {
 
 
         AlertDialog alert = builder.create();
+        alert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         alert.show();
     }
 

@@ -9,16 +9,15 @@
     android:paddingRight="24dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <AutoCompleteTextView
             android:id="@+id/dialog_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
+            android:dropDownHeight="100dp"
             android:maxLength="30"
             android:maxLines="1"
             android:hint="@string/city_name_hint"
@@ -28,7 +27,5 @@
             android:layout_marginBottom="1dp"
             android:inputType="text"
             android:digits="abcdefghijklmnopqrstuvwxyz -ABCDEFGHIJKLMNOPQRSTUVWXYZ" />
-
     </RelativeLayout>
-
 </LinearLayout>
