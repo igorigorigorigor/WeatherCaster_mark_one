@@ -151,8 +151,7 @@ public class CityLab {
 
                     String[] cityLine = line.split(cvsSplitBy);
                     String cityName = cityLine[1].split(":")[1].replace("\"", "");
-                    String countryName = cityLine[2].split(":")[1].replace("\"", "");
-                    allCitiesNames.add(cityName + "," + countryName);
+                    allCitiesNames.add(cityName);
                 }
             } finally {
                 br.close();
