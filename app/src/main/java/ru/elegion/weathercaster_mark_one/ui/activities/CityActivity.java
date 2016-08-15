@@ -30,8 +30,8 @@ public class CityActivity extends BaseActivity {
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {
             @Override
             public Fragment getItem(int position) {
-                City city = mCityLab.getCity(position);
-                return CityFragment.newInstance(city.getId());
+                City city = mCityLab.getCityByPosition(position);
+                return CityFragment.newInstance(city.getUID());
             }
 
             @Override
@@ -40,8 +40,8 @@ public class CityActivity extends BaseActivity {
             }
         });
 
-        String cityID = getIntent().getStringExtra(CityLab.getCityIdTag());
-        mCity = mCityLab.getCity(cityID);
+        String cityUID = getIntent().getStringExtra(CityLab.getCityUidTag());
+        mCity = mCityLab.getCityByUID(cityUID);
         int i = mCityLab.indexOf(mCity);
         mViewPager.setCurrentItem(i);
 
@@ -56,7 +56,7 @@ public class CityActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
-                City city = CityLab.build(getApplicationContext()).getCity(position);
+                City city = CityLab.build(getApplicationContext()).getCityByPosition(position);
                 getSupportActionBar().setTitle(city.getName() + ", " + city.getCountry());
             }
 

@@ -8,12 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -22,7 +17,7 @@ import java.util.ArrayList;
  * Created by Freeman on 07.07.2016.
  */
 public class CityLab {
-    private static final String CITY_ID_TAG = "ru.elegion.weathercaster_mark_one.city_id";
+    private static final String CITY_UID_TAG = "ru.elegion.weathercaster_mark_one.city_uid";
     private static final String LOG_TAG = "CityLab";
     private final Context mAppContext;
     private DBHelper mDBHelper;
@@ -40,8 +35,8 @@ public class CityLab {
         return sCityLab;
     }
 
-    public static String getCityIdTag() {
-        return CITY_ID_TAG;
+    public static String getCityUidTag() {
+        return CITY_UID_TAG;
     }
 
     public void updateCitiesInDB(ArrayList<City> cities) {
@@ -50,7 +45,7 @@ public class CityLab {
 
         for (City city : cities) {
             ContentValues cv = getContentValues(city);
-            db.update(mDBHelper.CITIES_TABLE_NAME, cv, "id = ?", new String[]{city.getId()});
+            db.update(mDBHelper.CITIES_TABLE_NAME, cv, "uid = ?", new String[]{city.getUID()});
         }
     }
 
@@ -81,9 +76,9 @@ public class CityLab {
     public void remove(int position) {
         mDBHelper = DBHelper.build(mAppContext);
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        String removedCityID = getCities().get(position).getId();
+        String removedCityUID = getCities().get(position).getUID();
 
-        db.delete(mDBHelper.CITIES_TABLE_NAME, "id = ?", new String[]{removedCityID});
+        db.delete(mDBHelper.CITIES_TABLE_NAME, "uid = ?", new String[]{removedCityUID});
     }
 
     public ArrayList<City> getCities() {
@@ -126,16 +121,16 @@ public class CityLab {
         return cities;
     }
 
-    public City getCity(int position) {
+    public City getCityByPosition(int position) {
         if (position >= 0 && position < getCities().size()){
             return getCities().get(position);
         }
         return null;
     }
 
-    public City getCity(String id) {
+    public City getCityByUID(String uid) {
         for (City city: getCities()){
-            if (id.equalsIgnoreCase(city.getId())){
+            if (uid.equalsIgnoreCase(city.getUID())){
                 return city;
             }
         }
@@ -173,12 +168,12 @@ public class CityLab {
         int size = getCities().size();
         if (someCity != null){
             for (int i = 0; i < size; i ++){
-                if (someCity.getUID().equalsIgnoreCase(getCity(i).getUID()))
+                if (someCity.getUID().equalsIgnoreCase(getCityByPosition(i).getUID()))
                     return i;
             }
         } else {
             for (int i = 0; i < size; i++) {
-                if (getCity(i) == null) {
+                if (getCityByPosition(i) == null) {
                     return i;
                 }
             }

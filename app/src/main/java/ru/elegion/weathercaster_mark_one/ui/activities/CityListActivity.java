@@ -20,13 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -208,7 +205,7 @@ public class CityListActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(CityHolder holder, int position) {
-            City city = mCityLab.getCity(position);
+            City city = mCityLab.getCityByPosition(position);
             holder.bindCity(city);
         }
 
@@ -229,7 +226,7 @@ public class CityListActivity extends BaseActivity {
                                 .remove(fragment)
                                 .commit();
                     } else {
-                        fragment = CityFragment.newInstance(mCityLab.getCity(mCityLab.getCities().size() - 1).getId());
+                        fragment = CityFragment.newInstance(mCityLab.getCityByPosition(mCityLab.getCities().size() - 1).getUID());
                         fm.beginTransaction()
                                 .replace(R.id.fragmentContainer, fragment)
                                 .commit();
@@ -269,13 +266,13 @@ public class CityListActivity extends BaseActivity {
         @Override
         public void onClick(View v) {
             if (mTwoPane) {
-                CityFragment fragment = CityFragment.newInstance(mCity.getId());
+                CityFragment fragment = CityFragment.newInstance(mCity.getUID());
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainer, fragment)
                         .commit();
             } else {
                 Intent i = new Intent(getApplicationContext(), CityActivity.class);
-                i.putExtra(CityLab.getCityIdTag(), mCity.getId());
+                i.putExtra(CityLab.getCityUidTag(), mCity.getUID());
                 startActivity(i);
             }
 
@@ -298,7 +295,7 @@ public class CityListActivity extends BaseActivity {
                 FragmentManager fm = getSupportFragmentManager();
                 CityFragment fragment = (CityFragment) fm.findFragmentById(R.id.fragmentContainer);
                 if (fragment == null) {
-                    fragment = CityFragment.newInstance(mCityLab.getCity(0).getId());
+                    fragment = CityFragment.newInstance(mCityLab.getCityByPosition(0).getUID());
                     fm.beginTransaction()
                             .add(R.id.fragmentContainer, fragment)
                             .commit();
@@ -324,12 +321,12 @@ public class CityListActivity extends BaseActivity {
                 FragmentManager fm = getSupportFragmentManager();
                 CityFragment fragment = (CityFragment) fm.findFragmentById(R.id.fragmentContainer);
                 if (fragment == null) {
-                    fragment = CityFragment.newInstance(mCityLab.getCity(mCityLab.getCities().size() - 1).getId());
+                    fragment = CityFragment.newInstance(mCityLab.getCityByPosition(mCityLab.getCities().size() - 1).getUID());
                     fm.beginTransaction()
                             .add(R.id.fragmentContainer, fragment)
                             .commit();
                 } else {
-                    fragment = CityFragment.newInstance(mCityLab.getCity(mCityLab.getCities().size() - 1).getId());
+                    fragment = CityFragment.newInstance(mCityLab.getCityByPosition(mCityLab.getCities().size() - 1).getUID());
                     fm.beginTransaction()
                             .replace(R.id.fragmentContainer, fragment)
                             .commit();

@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +30,9 @@ public class CityFragment extends Fragment {
     public void setCity(City city) { mCity = city; }
 
 
-    public static CityFragment newInstance(String id) {
+    public static CityFragment newInstance(String uid) {
         Bundle args = new Bundle();
-        args.putSerializable(CityLab.getCityIdTag(), id);
+        args.putSerializable(CityLab.getCityUidTag(), uid);
 
         CityFragment fragment = new CityFragment();
         fragment.setArguments(args);
@@ -44,8 +43,8 @@ public class CityFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String id = getArguments().getString(CityLab.getCityIdTag());
-        mCity = CityLab.build(getActivity()).getCity(id);
+        String id = getArguments().getString(CityLab.getCityUidTag());
+        mCity = CityLab.build(getActivity()).getCityByUID(id);
     }
 
 
