@@ -90,6 +90,7 @@ public class CityLab {
         Cursor c = db.query(mDBHelper.CITIES_TABLE_NAME, null, null, null, null, null, null);
 
         if (c.moveToFirst()) {
+            int uidColIndex = c.getColumnIndex(mDBHelper.UID_COLUMN_NAME);
             int idColIndex = c.getColumnIndex(mDBHelper.ID_COLUMN_NAME);
             int nameColIndex = c.getColumnIndex(mDBHelper.NAME_COLUMN_NAME);
             int countryColIndex = c.getColumnIndex(mDBHelper.COUNTRY_COLUMN_NAME);
@@ -112,6 +113,7 @@ public class CityLab {
                                 + c.getString(pressureColIndex) + ", windspeed"
                                 + c.getString(windspeedColIndex));
                 City city = new City();
+                city.setUID(c.getString(uidColIndex));
                 city.setId(c.getString(idColIndex));
                 city.setName(c.getString(nameColIndex));
                 city.setCountry(c.getString(countryColIndex));
@@ -166,5 +168,22 @@ public class CityLab {
             Log.e(LOG_TAG, e.getMessage());
         }
         return allCitiesNames;
+    }
+
+    public int indexOf(City someCity){
+        int size = getCities().size();
+        if (someCity != null){
+            for (int i = 0; i < size; i ++){
+                if (someCity.getUID().equalsIgnoreCase(getCity(i).getUID()))
+                    return i;
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (getCity(i) == null) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 }

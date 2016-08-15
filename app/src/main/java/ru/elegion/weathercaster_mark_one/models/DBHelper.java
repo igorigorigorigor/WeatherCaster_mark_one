@@ -13,6 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = "DBHelper";
     public static final String CITIES_TABLE_NAME = "cities";
     public static final String[] INITIAL_CITIES_IDS = {"524901", "498817", "554234", "491422", "551487"};
+    public static final String UID_COLUMN_NAME = "uid";
     public static final String ID_COLUMN_NAME = "id";
     public static final String COUNTRY_COLUMN_NAME = "country";
     public static final String NAME_COLUMN_NAME = "name";
@@ -44,7 +45,8 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d(LOG_TAG, "--- onCreate database ---");
         StringBuilder createCitiesTable = new StringBuilder();
         createCitiesTable.append("create table ")
-                .append(CITIES_TABLE_NAME).append(" (uid integer primary key autoincrement, ")
+                .append(CITIES_TABLE_NAME).append(" (")
+                .append(UID_COLUMN_NAME).append(" integer primary key autoincrement, ")
                 .append(ID_COLUMN_NAME).append(" integer, ")
                 .append(NAME_COLUMN_NAME).append(" text, ")
                 .append(COUNTRY_COLUMN_NAME).append(" text, ")

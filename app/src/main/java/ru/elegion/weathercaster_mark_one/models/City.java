@@ -4,6 +4,7 @@ package ru.elegion.weathercaster_mark_one.models;
  * Created by Freeman on 07.07.2016.
  */
 public class City {
+    private String mUID;
     private String mName;
     private String mId;
     private String mCountry;
@@ -23,6 +24,9 @@ public class City {
 
     public String getCountry() { return mCountry; }
     public void setCountry(String country) { mCountry = country; }
+
+    public String getUID() { return mUID; }
+    public void setUID(String UID) { mUID = UID; }
 
     public Weather getWeatherInfo() {
         if (mWeatherInfo == null) {

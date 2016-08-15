@@ -42,7 +42,7 @@ public class CityActivity extends BaseActivity {
 
         String cityID = getIntent().getStringExtra(CityLab.getCityIdTag());
         mCity = mCityLab.getCity(cityID);
-        int i = mCityLab.getCities().indexOf(mCity);
+        int i = mCityLab.indexOf(mCity);
         mViewPager.setCurrentItem(i);
 
         getSupportActionBar().setTitle(mCity.getName() + ", " + mCity.getCountry());
