@@ -5,6 +5,7 @@
     <string name="API_KEY">df7baaabd500e55d7c8048a30cd21ab1</string>
     <string name="downloading_data">Initializing weather info</string>
     <string name="network_error">Network error. \nPlease, check your network \nconnection and try again.</string>
+    <string name="empty_list">No cities left to show. \nPlease, add a city \nusing \"+\" button.</string>
     <string name="btnRefresh">REFRESH</string>
     <string name="addCityDialogTitle">Add City</string>
     <string name="addCityDialogContent">Please, set city name</string>

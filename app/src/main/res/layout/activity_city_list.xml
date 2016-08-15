@@ -8,10 +8,20 @@
     android:paddingRight="8dp"
     android:paddingTop="30dp"
     android:background="@color/main_background">
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+
+<FrameLayout  android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tvEmptyList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:text="@string/empty_list"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        android:gravity="center"
+        android:visibility="gone"/>
     <android.support.v7.widget.RecyclerView
               android:id="@+id/recycler_view"
               android:layout_width="match_parent"

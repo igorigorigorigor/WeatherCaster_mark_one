@@ -106,6 +106,9 @@ public class CityListActivity extends BaseActivity {
         });
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
+
+        mAllCitiesNames = mCityLab.getAllCitiesNames();
+
         FloatingActionButton btnAddCity = (FloatingActionButton) findViewById(R.id.btnAddCity);
         btnAddCity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,8 +121,7 @@ public class CityListActivity extends BaseActivity {
             };
          });
 
-
-        mAllCitiesNames = mCityLab.getAllCitiesNames();
+        showEmptyListMessage();
     }
 
     private void showAlertDialog() {
@@ -233,6 +235,8 @@ public class CityListActivity extends BaseActivity {
                     }
                 }
             }
+
+            showEmptyListMessage();
         }
     }
 
@@ -332,6 +336,7 @@ public class CityListActivity extends BaseActivity {
                             .commit();
                 }
             }
+            showEmptyListMessage();
         }
     }
 
@@ -350,6 +355,15 @@ public class CityListActivity extends BaseActivity {
             mProgressDialog.setMessage(getString(R.string.downloading_data));
             mProgressDialog.setCanceledOnTouchOutside(false);
             mProgressDialog.show();
+        }
+    }
+
+    private void showEmptyListMessage() {
+        TextView tvEmptyList = (TextView) findViewById(R.id.tvEmptyList);
+        if (mCityLab.getCities().size() == 0){
+            tvEmptyList.setVisibility(View.VISIBLE);
+        } else {
+            tvEmptyList.setVisibility(View.GONE);
         }
     }
 }

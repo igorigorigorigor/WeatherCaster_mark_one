@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:id="@+id/flNetworkError">
-    <RelativeLayout
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|center_vertical">
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:id="@+id/flNetworkError">
         <TextView
             android:id="@+id/tvNetworkError"
             android:layout_width="wrap_content"
@@ -22,9 +20,4 @@
             android:text="@string/btnRefresh"
             android:layout_below="@id/tvNetworkError"
             android:layout_centerHorizontal="true"/>
-    </RelativeLayout>
-    <ListView android:id="@android:id/list"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:visibility="gone"/>
-</FrameLayout>
+</RelativeLayout>
