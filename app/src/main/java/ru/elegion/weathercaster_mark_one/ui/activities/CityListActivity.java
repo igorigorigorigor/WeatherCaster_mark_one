@@ -45,7 +45,6 @@ public class CityListActivity extends BaseActivity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private ProgressDialog mProgressDialog;
-    private LinearLayoutManager mLayoutManager;
     private ArrayList<String> mAllCitiesNames;
     private boolean mTwoPane;
     private ItemTouchHelper mItemTouchHelper;
@@ -123,13 +122,7 @@ public class CityListActivity extends BaseActivity {
          });
 
 
-
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                mAllCitiesNames = mCityLab.getAllCitiesNames();
-            }
-        });
-        t.start();
+        mAllCitiesNames = mCityLab.getAllCitiesNames();
     }
 
     private void showAlertDialog() {

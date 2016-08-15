@@ -12,7 +12,10 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -102,16 +105,6 @@ public class CityLab {
             int windspeedColIndex = c.getColumnIndex(mDBHelper.WINDSPEED_COLUMN_NAME);
 
             do {
-                Log.d(LOG_TAG,
-                        "ID = " + c.getInt(idColIndex) + ", name = "
-                                + c.getString(nameColIndex) + ", country = "
-                                + c.getString(countryColIndex) + ", icon = "
-                                + c.getString(iconColIndex) + ", temp = "
-                                + c.getString(tempColIndex) + ", description = "
-                                + c.getString(descriptionColIndex) + ", humidity = "
-                                + c.getString(humidityColIndex) + ", pressure = "
-                                + c.getString(pressureColIndex) + ", windspeed"
-                                + c.getString(windspeedColIndex));
                 City city = new City();
                 city.setUID(c.getString(uidColIndex));
                 city.setId(c.getString(idColIndex));
@@ -152,21 +145,27 @@ public class CityLab {
     @Nullable
     public ArrayList<String> getAllCitiesNames(){
 
+        String line = "";
+        String cvsSplitBy = ",";
         ArrayList<String> allCitiesNames = new ArrayList<>();
-        try {
-            JsonFactory jfactory = new JsonFactory();
-            JsonParser jParser = jfactory.createParser(mAppContext.getAssets().open(sFilename));
 
-            while (jParser.nextToken() != JsonToken.END_ARRAY) {
-                if (jParser.getCurrentName() != null && jParser.getCurrentName().equalsIgnoreCase(mDBHelper.NAME_COLUMN_NAME)){
-                    jParser.nextToken();
-                    allCitiesNames.add(jParser.getText());
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(mAppContext.getAssets().open(sFilename)));
+            try {
+                while ((line = br.readLine()) != null) {
+
+                    String[] cityLine = line.split(cvsSplitBy);
+                    String cityName = cityLine[1].split(":")[1].replace("\"", "");
+
+                    allCitiesNames.add(cityName);
                 }
+            } finally {
+                br.close();
             }
-            jParser.close();
         } catch (IOException e) {
             Log.e(LOG_TAG, e.getMessage());
         }
+
         return allCitiesNames;
     }
 
